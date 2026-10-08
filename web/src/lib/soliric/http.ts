@@ -45,7 +45,7 @@ export async function handle(fn: () => Promise<unknown>, opts: { lang?: Lang; om
   }
 }
 
-export const isEmail = (s: string) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s);
+export { isEmail } from './validation';
 
 const adminUids = () => (process.env.SOLIRIC_ADMIN_UIDS ?? '').split(',').map((s) => s.trim()).filter(Boolean);
 export const isAdmin = (uid: string) => adminUids().includes(uid);
