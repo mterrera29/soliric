@@ -1,18 +1,12 @@
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import { and, desc, eq, gt, isNull, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { partners, works } from '@/db/schema';
 import { ApiError } from './http';
+import { KEY_PREFIX, generateKey, hashKey, keyPrefixOf } from './partner-keys';
+export { externalUid } from './partner-keys';
 
 export type Partner = typeof partners.$inferSelect;
-
-const KEY_PREFIX = 'sol_live_';
-export const hashKey = (key: string) => createHash('sha256').update(key).digest('hex');
-
-/** Una clave nueva: `sol_live_` + 32 bytes aleatorios. Se muestra una sola vez; en la base queda solo su hash. */
-export function generateKey(): string {
-  return KEY_PREFIX + randomBytes(32).toString('base64url');
-}
 
 export async function createPartner(ownerUid: string, name: string) {
   const clean = name.trim().slice(0, 80);
@@ -21,8 +15,8 @@ export async function createPartner(ownerUid: string, name: string) {
   if (Number(existing[0]?.n ?? 0) >= 5) throw new ApiError(400, 'Llegaste al máximo de 5 claves activas. Revocá una para crear otra.');
   const key = generateKey();
   const id = randomUUID();
-  await db.insert(partners).values({ id, ownerUid, name: clean, keyPrefix: key.slice(0, KEY_PREFIX.length + 4), keyHash: hashKey(key) });
-  return { id, name: clean, key, keyPrefix: key.slice(0, KEY_PREFIX.length + 4) };
+  await db.insert(partners).values({ id, ownerUid, name: clean, keyPrefix: keyPrefixOf(key), keyHash: hashKey(key) });
+  return { id, name: clean, key, keyPrefix: keyPrefixOf(key) };
 }
 
 export const listPartners = (ownerUid: string) =>
@@ -61,7 +55,3 @@ export async function assertPartnerWithinLimit(partner: Partner) {
     throw new ApiError(429, 'Esta app llegó al máximo de obras por día. Probá de nuevo mañana.', { code: 'partner_daily_limit' });
   }
 }
-
-/** Uid sintético del autor cuando la obra la crea una app asociada (identificado por su email). */
-export const externalUid = (partnerId: string, email: string) =>
-  `ext:${partnerId}:${createHash('sha256').update(email.trim().toLowerCase()).digest('hex').slice(0, 24)}`;
