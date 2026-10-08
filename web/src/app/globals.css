@@ -96,7 +96,7 @@ button.bg-ember:hover {
 /* ── Landing de Soliric ──
    Lo cálido (brasa) es la letra y lo humano; el verde y el violeta de Solana aparecen solo donde algo
    queda en la cadena. La landing se ve siempre oscura, también si la app está en modo claro. */
-.soliric-landing {
+:root {
   --l-bg: #15100d;
   --l-surface: #1f1814;
   --l-raised: #281f19;
@@ -108,10 +108,10 @@ button.bg-ember:hover {
   --ember-soft: #fdb174;
   --sol-violet: #9945ff;
   --sol-green: #14f195;
-  background: var(--l-bg);
-  color: var(--l-text);
 }
-.soliric-landing .mono { font-family: var(--font-mono), ui-monospace, 'SF Mono', Menlo, monospace; font-variant-numeric: tabular-nums; }
+/* Las pantallas con la estética de la landing (landing y /developers) pintan su propio fondo */
+.soliric-landing { background: var(--l-bg); color: var(--l-text); }
+.mono { font-family: var(--font-mono), ui-monospace, 'SF Mono', Menlo, monospace; font-variant-numeric: tabular-nums; }
 
 /* Borde con degradé brasa → violeta → verde: el sello de "esto queda en la cadena" */
 .sol-ring { position: relative; background: var(--l-surface); border-radius: 28px; }
@@ -129,9 +129,9 @@ button.bg-ember:hover {
 }
 .sol-flash { animation: sol-flash 0.9s ease-out; }
 
-.soliric-landing a:focus-visible,
-.soliric-landing button:focus-visible,
-.soliric-landing textarea:focus-visible { outline: 2px solid var(--sol-green); outline-offset: 3px; border-radius: 10px; }
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible { outline: 2px solid var(--sol-green); outline-offset: 3px; border-radius: 10px; }
 
 .sol-btn-primary {
   background: var(--ember); color: #1a110b; font-weight: 700; border-radius: 14px;
