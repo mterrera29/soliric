@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { buildMetadata, canonicalJson, hashMetadata, registrationMemo } from './metadata';
 
-const base = { title: 'Después de las tres', artist: 'Mati', authorName: 'Matías Terrera', fingerprint: 'ab'.repeat(32), registeredAt: '2026-10-07T19:31:07.000Z' };
+const base = { title: 'Después de las tres', artist: 'Ana', authorName: 'Ana Pérez', fingerprint: 'ab'.repeat(32), registeredAt: '2026-10-07T19:31:07.000Z' };
 
 test('the hash does not depend on key order or extra spaces', () => {
   const a = buildMetadata(base);

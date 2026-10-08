@@ -23,8 +23,8 @@ export default async function DevelopersPage() {
   -H "Content-Type: application/json" \\
   -d '{
     "title": "After three",
-    "artist": "Mati",
-    "author": { "name": "Matías Terrera", "email": "mati@example.com" },
+    "artist": "Ana",
+    "author": { "name": "Ana Pérez", "email": "ana@example.com" },
     "lyrics": "I woke up wanting to sing to the moon\\nand the empty street kept me company",
     "attestation": true,
     "externalRef": "your-song-id-123"
