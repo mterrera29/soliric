@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-terracotta: #D97706;
+  --color-terracotta-light: #E89933;
+  --color-terracotta-dark: #B86400;
+  --color-warm-tan: #D4A373;
+  --color-dusty-rose: #DCA9A9;
+  --color-soft-sage: #A8C4A0;
+  --color-charcoal: #1C1816;
+  --color-charcoal-light: #27211D;
+  --color-cream: #F5EDE3;
+  --color-ember: #F58A45;
+  --color-ember-light: #FDB174;
+}
+
+/* Soliric es siempre oscuro: estos son los valores que usan las pantallas internas */
+:root {
+  --bg-primary: #1C1816;
+  --bg-secondary: #27211D;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-hover: rgba(255, 255, 255, 0.08);
+  --text-primary: #F0E8DE;
+  --text-secondary: rgba(240, 232, 222, 0.62);
+  --text-muted: rgba(240, 232, 222, 0.42);
+  --border-color: rgba(240, 232, 222, 0.1);
+  --header-bg: rgba(28, 24, 22, 0.95);
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --radius-cozy: 20px;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-heading {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 600;
+  font-variation-settings: 'SOFT' 100, 'WONK' 0;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+@keyframes slideIn { from { transform: translateX(-12px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.animate-slide-in { animation: slideIn 0.25s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}
+
+.btn-cozy { border-radius: 9999px; transition: all 0.2s ease; }
+.btn-cozy:hover { transform: scale(1.03); }
+.btn-cozy:active { transform: scale(0.96); }
+
+/* ── Impresión del certificado ── */
+.print-root { display: none; }
+.print-sheet {
+  --text-primary: #1f1a17;
+  --text-secondary: #6f6259;
+  --text-muted: #9a8d83;
+  --border-color: #e7ded5;
+  background: #fff;
+  color: var(--text-primary);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.print-sheet .text-ember-light { color: #c2410c !important; }
+@page { size: A4; margin: 14mm 14mm 16mm; }
+@media print {
+  html, body { background: #fff !important; }
+  body > *:not(.print-root) { display: none !important; }
+  .print-root { display: block !important; }
+}
+
+/* Botón principal: color liso, sin brillo ni sombra */
+.bg-ember.btn-cozy,
+button.bg-ember {
+  background-color: #E8793A;
+  color: #fff;
+  box-shadow: none;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+.bg-ember.btn-cozy:hover,
+button.bg-ember:hover {
+  background-color: #D96A2B;
+  transform: none;
+}
+
+/* ── Landing de Soliric ──
+   Lo cálido (brasa) es la letra y lo humano; el verde y el violeta de Solana aparecen solo donde algo
+   queda en la cadena. La landing se ve siempre oscura, también si la app está en modo claro. */
+.soliric-landing {
+  --l-bg: #15100d;
+  --l-surface: #1f1814;
+  --l-raised: #281f19;
+  --l-text: #f7efe5;
+  --l-muted: rgba(247, 239, 229, 0.74);
+  --l-faint: rgba(247, 239, 229, 0.5);
+  --l-line: rgba(247, 239, 229, 0.12);
+  --ember: #f58a45;
+  --ember-soft: #fdb174;
+  --sol-violet: #9945ff;
+  --sol-green: #14f195;
+  background: var(--l-bg);
+  color: var(--l-text);
+}
+.soliric-landing .mono { font-family: var(--font-mono), ui-monospace, 'SF Mono', Menlo, monospace; font-variant-numeric: tabular-nums; }
+
+/* Borde con degradé brasa → violeta → verde: el sello de "esto queda en la cadena" */
+.sol-ring { position: relative; background: var(--l-surface); border-radius: 28px; }
+.sol-ring::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px; pointer-events: none;
+  background: linear-gradient(135deg, var(--ember) 0%, var(--sol-violet) 58%, var(--sol-green) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+
+/* El carácter de la huella que cambió se enciende un instante */
+@keyframes sol-flash {
+  0% { color: var(--sol-green); text-shadow: 0 0 14px rgba(20, 241, 149, 0.7); }
+  100% { color: inherit; text-shadow: none; }
+}
+.sol-flash { animation: sol-flash 0.9s ease-out; }
+
+.soliric-landing a:focus-visible,
+.soliric-landing button:focus-visible,
+.soliric-landing textarea:focus-visible { outline: 2px solid var(--sol-green); outline-offset: 3px; border-radius: 10px; }
+
+.sol-btn-primary {
+  background: var(--ember); color: #1a110b; font-weight: 700; border-radius: 14px;
+  transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 0 0 0 rgba(245, 138, 69, 0);
+}
+.sol-btn-primary:hover { background: var(--ember-soft); box-shadow: 0 8px 28px -8px rgba(245, 138, 69, 0.55); }
+.sol-btn-primary:active { transform: scale(0.98); }
+.sol-btn-ghost {
+  border: 1px solid var(--l-line); color: var(--l-text); border-radius: 14px; font-weight: 600;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+.sol-btn-ghost:hover { background: rgba(247, 239, 229, 0.06); border-color: rgba(247, 239, 229, 0.3); }
+
+.sol-hero-glow {
+  background:
+    radial-gradient(60% 55% at 12% 88%, rgba(245, 138, 69, 0.2), transparent 70%),
+    radial-gradient(45% 50% at 92% 8%, rgba(153, 69, 255, 0.2), transparent 70%),
+    radial-gradient(30% 35% at 78% 70%, rgba(20, 241, 149, 0.08), transparent 70%);
+}

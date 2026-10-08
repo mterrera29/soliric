@@ -1,0 +1,1484 @@
+{
+  "address": "5LWoTgRR5HD4pkPq4qQ38BEeaVfd6Uuvs3Svkm6X3MTJ",
+  "metadata": {
+    "name": "lyrics_solana",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "accept_invite",
+      "docs": [
+        "El invitado acepta participar (y acepta la regla de reparto por aportes)."
+      ],
+      "discriminator": [
+        173,
+        11,
+        225,
+        180,
+        81,
+        89,
+        93,
+        138
+      ],
+      "accounts": [
+        {
+          "name": "work",
+          "writable": true
+        },
+        {
+          "name": "signer",
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "add_collaborator",
+      "docs": [
+        "El creador suma a un colaborador mientras la obra está abierta."
+      ],
+      "discriminator": [
+        101,
+        50,
+        92,
+        92,
+        207,
+        109,
+        57,
+        25
+      ],
+      "accounts": [
+        {
+          "name": "work",
+          "writable": true
+        },
+        {
+          "name": "creator",
+          "signer": true,
+          "relations": [
+            "work"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "wallet",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "challenge",
+      "docs": [
+        "Cualquier wallet ajena a la obra la impugna (ej. \"es de otro autor\") mientras está",
+        "en ventana o ya final. Queda en disputa hasta que el árbitro resuelva."
+      ],
+      "discriminator": [
+        16,
+        107,
+        14,
+        39,
+        244,
+        150,
+        81,
+        187
+      ],
+      "accounts": [
+        {
+          "name": "work",
+          "writable": true
+        },
+        {
+          "name": "challenge",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  104,
+                  97,
+                  108,
+                  108,
+                  101,
+                  110,
+                  103,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "work"
+              },
+              {
+                "kind": "account",
+                "path": "challenger"
+              }
+            ]
+          }
+        },
+        {
+          "name": "challenger",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "evidence_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "commit_version",
+      "docs": [
+        "Un colaborador registra una nueva versión (checkpoint) de la obra."
+      ],
+      "discriminator": [
+        223,
+        216,
+        39,
+        114,
+        120,
+        241,
+        138,
+        238
+      ],
+      "accounts": [
+        {
+          "name": "work",
+          "writable": true
+        },
+        {
+          "name": "version",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  101,
+                  114,
+                  115,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "work"
+              },
+              {
+                "kind": "account",
+                "path": "work.version_count",
+                "account": "Work"
+              }
+            ]
+          }
+        },
+        {
+          "name": "author",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "content_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "units",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "create_derivative",
+      "docs": [
+        "Crea una obra derivada pagando la licencia de la original.",
+        "El pago se reparte según el reparto final de la original.",
+        "`remaining_accounts`: las wallets de los autores de la original, en orden."
+      ],
+      "discriminator": [
+        133,
+        75,
+        108,
+        147,
+        194,
+        66,
+        234,
+        130
+      ],
+      "accounts": [
+        {
+          "name": "parent",
+          "writable": true
+        },
+        {
+          "name": "work",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  111,
+                  114,
+                  107
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "work_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "version",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  101,
+                  114,
+                  115,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "work"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "work_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "content_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "units",
+          "type": "u64"
+        },
+        {
+          "name": "solo",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "create_work",
+      "docs": [
+        "Crea una obra y registra la versión 0.",
+        "`solo = true`: un único autor firma la obra como suya (100%). Con `objection_secs > 0`",
+        "queda en ventana pública de impugnación (`Closing`); con 0 queda final al instante.",
+        "`solo = false`: queda abierta para colaboradores y versiones.",
+        "`units` es la cantidad de cambio de esta versión (la app la calcula con un diff)."
+      ],
+      "discriminator": [
+        169,
+        196,
+        137,
+        21,
+        147,
+        200,
+        52,
+        85
+      ],
+      "accounts": [
+        {
+          "name": "work",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  111,
+                  114,
+                  107
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "work_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "version",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  101,
+                  114,
+                  115,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "work"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "work_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "content_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "units",
+          "type": "u64"
+        },
+        {
+          "name": "solo",
+          "type": "bool"
+        },
+        {
+          "name": "objection_secs",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "finalize",
+      "docs": [
+        "Cualquiera puede dejar final un reparto automático cuando venció la ventana."
+      ],
+      "discriminator": [
+        171,
+        61,
+        218,
+        56,
+        127,
+        115,
+        12,
+        217
+      ],
+      "accounts": [
+        {
+          "name": "work",
+          "writable": true
+        },
+        {
+          "name": "signer",
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "init_config",
+      "docs": [
+        "Crea la configuración global con la wallet árbitro que resuelve impugnaciones.",
+        "Hay que llamarla justo después del deploy."
+      ],
+      "discriminator": [
+        23,
+        235,
+        115,
+        232,
+        168,
+        96,
+        1,
+        231
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "arbiter",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "object",
+      "docs": [
+        "Un autor objeta el reparto automático dentro de la ventana: vuelve a edición."
+      ],
+      "discriminator": [
+        35,
+        81,
+        255,
+        174,
+        61,
+        87,
+        151,
+        134
+      ],
+      "accounts": [
+        {
+          "name": "work",
+          "writable": true
+        },
+        {
+          "name": "signer",
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "propose_split",
+      "docs": [
+        "El creador cierra la edición.",
+        "Sin `manual_bps`: reparto automático por aportes, queda final al instante.",
+        "Con `manual_bps`: queda propuesto y todos deben firmarlo."
+      ],
+      "discriminator": [
+        38,
+        104,
+        30,
+        96,
+        107,
+        245,
+        76,
+        252
+      ],
+      "accounts": [
+        {
+          "name": "work",
+          "writable": true
+        },
+        {
+          "name": "creator",
+          "signer": true,
+          "relations": [
+            "work"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "manual_bps",
+          "type": {
+            "option": {
+              "vec": "u16"
+            }
+          }
+        },
+        {
+          "name": "objection_secs",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "remove_invite",
+      "docs": [
+        "El creador retira una invitación que todavía no fue aceptada."
+      ],
+      "discriminator": [
+        70,
+        118,
+        203,
+        193,
+        31,
+        95,
+        187,
+        245
+      ],
+      "accounts": [
+        {
+          "name": "work",
+          "writable": true
+        },
+        {
+          "name": "creator",
+          "signer": true,
+          "relations": [
+            "work"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "wallet",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "reopen",
+      "docs": [
+        "El creador reabre la obra si alguien no está de acuerdo con el reparto."
+      ],
+      "discriminator": [
+        149,
+        205,
+        131,
+        38,
+        192,
+        87,
+        111,
+        166
+      ],
+      "accounts": [
+        {
+          "name": "work",
+          "writable": true
+        },
+        {
+          "name": "creator",
+          "signer": true,
+          "relations": [
+            "work"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "resolve_challenge",
+      "docs": [
+        "El árbitro resuelve: si la impugnación prospera la obra queda revocada (definitivo);",
+        "si no, vuelve al estado que tenía."
+      ],
+      "discriminator": [
+        81,
+        191,
+        124,
+        119,
+        131,
+        248,
+        157,
+        109
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "work",
+          "writable": true,
+          "relations": [
+            "challenge"
+          ]
+        },
+        {
+          "name": "challenge",
+          "writable": true
+        },
+        {
+          "name": "arbiter",
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "upheld",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "set_arbiter",
+      "docs": [
+        "El árbitro actual puede traspasar el rol."
+      ],
+      "discriminator": [
+        15,
+        205,
+        194,
+        180,
+        172,
+        213,
+        113,
+        211
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "arbiter",
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "arbiter",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "set_license",
+      "docs": [
+        "Define si la obra permite derivados (traducciones, covers, adaptaciones)",
+        "y cuánto cuesta la licencia en lamports. Solo con la obra final."
+      ],
+      "discriminator": [
+        66,
+        147,
+        54,
+        35,
+        233,
+        101,
+        216,
+        150
+      ],
+      "accounts": [
+        {
+          "name": "work",
+          "writable": true
+        },
+        {
+          "name": "creator",
+          "signer": true,
+          "relations": [
+            "work"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "allow_derivatives",
+          "type": "bool"
+        },
+        {
+          "name": "derivative_fee",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "sign_split",
+      "docs": [
+        "Cada autor firma el reparto propuesto. Cuando firman todos, la obra queda final."
+      ],
+      "discriminator": [
+        171,
+        254,
+        37,
+        214,
+        69,
+        80,
+        114,
+        93
+      ],
+      "accounts": [
+        {
+          "name": "work",
+          "writable": true
+        },
+        {
+          "name": "signer",
+          "signer": true
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Challenge",
+      "discriminator": [
+        119,
+        250,
+        161,
+        121,
+        119,
+        81,
+        22,
+        208
+      ]
+    },
+    {
+      "name": "Config",
+      "discriminator": [
+        155,
+        12,
+        170,
+        224,
+        30,
+        250,
+        204,
+        130
+      ]
+    },
+    {
+      "name": "Version",
+      "discriminator": [
+        234,
+        4,
+        254,
+        42,
+        242,
+        196,
+        136,
+        199
+      ]
+    },
+    {
+      "name": "Work",
+      "discriminator": [
+        140,
+        4,
+        80,
+        230,
+        31,
+        233,
+        85,
+        175
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "Challenged",
+      "discriminator": [
+        208,
+        48,
+        104,
+        229,
+        231,
+        85,
+        175,
+        193
+      ]
+    },
+    {
+      "name": "Finalized",
+      "discriminator": [
+        4,
+        77,
+        242,
+        80,
+        20,
+        152,
+        247,
+        252
+      ]
+    },
+    {
+      "name": "Resolved",
+      "discriminator": [
+        148,
+        46,
+        187,
+        66,
+        35,
+        1,
+        255,
+        147
+      ]
+    },
+    {
+      "name": "VersionCommitted",
+      "discriminator": [
+        6,
+        64,
+        184,
+        200,
+        254,
+        60,
+        78,
+        7
+      ]
+    },
+    {
+      "name": "WorkCreated",
+      "discriminator": [
+        18,
+        80,
+        107,
+        203,
+        80,
+        54,
+        177,
+        105
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "NotCreator",
+      "msg": "Solo el creador puede hacer esto"
+    },
+    {
+      "code": 6001,
+      "name": "NotOpen",
+      "msg": "La obra no está abierta a cambios"
+    },
+    {
+      "code": 6002,
+      "name": "NotProposed",
+      "msg": "No hay un reparto propuesto"
+    },
+    {
+      "code": 6003,
+      "name": "NotContributor",
+      "msg": "Esa wallet no es colaboradora de la obra"
+    },
+    {
+      "code": 6004,
+      "name": "TooManyContributors",
+      "msg": "Máximo 8 colaboradores"
+    },
+    {
+      "code": 6005,
+      "name": "AlreadyContributor",
+      "msg": "Esa wallet ya es colaboradora"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidSplit",
+      "msg": "El reparto debe tener un valor por colaborador y sumar 100%"
+    },
+    {
+      "code": 6007,
+      "name": "NoContributions",
+      "msg": "Todavía no hay cambios registrados para calcular el reparto"
+    },
+    {
+      "code": 6008,
+      "name": "NotJoined",
+      "msg": "Ese colaborador todavía no aceptó la invitación"
+    },
+    {
+      "code": 6009,
+      "name": "InvalidWindow",
+      "msg": "La ventana de objeción debe estar entre 0 y 7 días"
+    },
+    {
+      "code": 6010,
+      "name": "NotClosing",
+      "msg": "El reparto no está en ventana de objeción"
+    },
+    {
+      "code": 6011,
+      "name": "WindowClosed",
+      "msg": "La ventana de objeción ya cerró"
+    },
+    {
+      "code": 6012,
+      "name": "StillInWindow",
+      "msg": "La ventana de objeción sigue abierta"
+    },
+    {
+      "code": 6013,
+      "name": "PendingInvites",
+      "msg": "Hay invitaciones sin aceptar"
+    },
+    {
+      "code": 6014,
+      "name": "NotFinal",
+      "msg": "La obra debe estar final (reparto firmado por todos)"
+    },
+    {
+      "code": 6015,
+      "name": "DerivativesNotAllowed",
+      "msg": "Esta obra no permite derivados"
+    },
+    {
+      "code": 6016,
+      "name": "AuthorAccountsMismatch",
+      "msg": "Las cuentas de autores no coinciden con las de la obra original"
+    },
+    {
+      "code": 6017,
+      "name": "NotChallengeable",
+      "msg": "Solo se puede impugnar una obra en ventana o final"
+    },
+    {
+      "code": 6018,
+      "name": "ContributorCannotChallenge",
+      "msg": "Los autores de la obra no pueden impugnarla; deben objetar"
+    },
+    {
+      "code": 6019,
+      "name": "NotDisputed",
+      "msg": "La obra no está en disputa"
+    },
+    {
+      "code": 6020,
+      "name": "NotArbiter",
+      "msg": "Solo el árbitro puede hacer esto"
+    }
+  ],
+  "types": [
+    {
+      "name": "Challenge",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "work",
+            "type": "pubkey"
+          },
+          {
+            "name": "challenger",
+            "type": "pubkey"
+          },
+          {
+            "name": "evidence_hash",
+            "docs": [
+              "Hash de la evidencia (texto/links) guardada off-chain."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "prev_status",
+            "docs": [
+              "Estado de la obra antes de la disputa, para restaurarlo si no prospera."
+            ],
+            "type": {
+              "defined": {
+                "name": "Status"
+              }
+            }
+          },
+          {
+            "name": "resolved",
+            "type": "bool"
+          },
+          {
+            "name": "upheld",
+            "type": "bool"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Challenged",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "work",
+            "type": "pubkey"
+          },
+          {
+            "name": "challenger",
+            "type": "pubkey"
+          },
+          {
+            "name": "evidence_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Config",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "arbiter",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Contributor",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "units",
+            "docs": [
+              "Unidades de cambio acumuladas (base del reparto automático)."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bps",
+            "docs": [
+              "Porcentaje en basis points (10000 = 100%). Vale desde que se propone el reparto."
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "signed",
+            "type": "bool"
+          },
+          {
+            "name": "joined",
+            "docs": [
+              "El colaborador aceptó la invitación (el creador entra ya aceptado)."
+            ],
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Finalized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "work",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Resolved",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "work",
+            "type": "pubkey"
+          },
+          {
+            "name": "challenger",
+            "type": "pubkey"
+          },
+          {
+            "name": "upheld",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Status",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Open"
+          },
+          {
+            "name": "Proposed"
+          },
+          {
+            "name": "Closing"
+          },
+          {
+            "name": "Final"
+          },
+          {
+            "name": "Disputed"
+          },
+          {
+            "name": "Revoked"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Version",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "work",
+            "type": "pubkey"
+          },
+          {
+            "name": "index",
+            "type": "u32"
+          },
+          {
+            "name": "author",
+            "type": "pubkey"
+          },
+          {
+            "name": "content_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "prev_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "units",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VersionCommitted",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "work",
+            "type": "pubkey"
+          },
+          {
+            "name": "author",
+            "type": "pubkey"
+          },
+          {
+            "name": "index",
+            "type": "u32"
+          },
+          {
+            "name": "content_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Work",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "work_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "Status"
+              }
+            }
+          },
+          {
+            "name": "latest_hash",
+            "docs": [
+              "Hash de la última versión; el texto vive off-chain."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "version_count",
+            "type": "u32"
+          },
+          {
+            "name": "contributors",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "Contributor"
+                }
+              }
+            }
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "parent",
+            "docs": [
+              "Obra original si esta es un derivado (traducción, cover, adaptación)."
+            ],
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "allow_derivatives",
+            "type": "bool"
+          },
+          {
+            "name": "derivative_fee",
+            "docs": [
+              "Precio en lamports de la licencia para crear un derivado."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "derivative_count",
+            "type": "u32"
+          },
+          {
+            "name": "closes_at",
+            "docs": [
+              "Fin de la ventana de objeción (unix). Solo vale en estado Closing."
+            ],
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WorkCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "work",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "work_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "content_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "Status"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

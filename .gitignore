@@ -1,0 +1,18 @@
+# Rust / Anchor
+target/
+.anchor/
+test-ledger/
+.ledger/
+# Web
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+# Secretos y datos locales: nunca se suben
+.env
+.env.*
+!.env.example
+*.keypair.json
+**/id.json
+.DS_Store
