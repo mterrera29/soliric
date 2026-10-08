@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { DM_Sans, Fraunces, JetBrains_Mono } from "next/font/google";
+import { Figtree, Young_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/hooks/useAuth";
 import { I18nProvider } from "@/hooks/useI18n";
 import { getLang } from "@/lib/i18n/server";
 import SiteHeader from "@/components/SiteHeader";
 
-const dmSans = DM_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-dm-sans" });
-const fraunces = Fraunces({ subsets: ["latin"], weight: "variable", variable: "--font-fraunces", axes: ["SOFT", "WONK"] });
+const figtree = Figtree({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-figtree" });
+const youngSerif = Young_Serif({ subsets: ["latin"], weight: "400", variable: "--font-young-serif" });
 
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
 
@@ -19,8 +19,8 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const lang = await getLang();
   return (
-    <html lang={lang} data-theme="dark" className={`${dmSans.variable} ${fraunces.variable} ${mono.variable}`}>
-      <body className={dmSans.className}>
+    <html lang={lang} data-theme="dark" className={`${figtree.variable} ${youngSerif.variable} ${mono.variable}`}>
+      <body className={figtree.className}>
         <I18nProvider initialLang={lang}>
           <AuthProvider>
             <SiteHeader />

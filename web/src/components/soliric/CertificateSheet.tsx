@@ -1,6 +1,7 @@
 'use client';
 
 import { useI18n } from '@/hooks/useI18n';
+import Logo from '@/components/Logo';
 import { STATUS_LABEL, type CertificateData } from '@/lib/soliric/types';
 import { explorerAddr, explorerTx } from '@/lib/soliric/links';
 
@@ -14,7 +15,7 @@ export default function CertificateSheet({ data, qr }: { data: CertificateData; 
   return (
     <article className="print-sheet mx-auto w-full max-w-[720px] rounded-2xl p-8 sm:p-10 space-y-6" aria-label={t('Certificado de registro de autoría')}>
       <header className="text-center space-y-1 pb-5" style={{ borderBottom: '2px solid #c2410c' }}>
-        <p className="text-xs uppercase tracking-[0.25em] text-ember-light">Soliric</p>
+        <div className="flex justify-center pb-1"><Logo size={30} variant="light" /></div>
         <h1 className="text-2xl font-heading">{t('Certificado de registro de autoría')}</h1>
         <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{t('Registrado en la blockchain de Solana ({cluster})', { cluster: data.cluster })}</p>
       </header>

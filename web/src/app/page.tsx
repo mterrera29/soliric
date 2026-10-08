@@ -57,8 +57,7 @@ export default async function SoliricLanding() {
         <section className="sol-hero-glow relative">
           <div className={`${container} grid gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-14 items-center py-16 sm:py-24`}>
             <div className="space-y-7">
-              <h1 className="font-heading text-[clamp(2.4rem,6.2vw,4.7rem)] leading-[1.02] tracking-tight max-w-[14ch]"
-                style={{ fontVariationSettings: '"SOFT" 100, "WONK" 1' }}>
+              <h1 className="font-heading text-[clamp(2.4rem,6.2vw,4.7rem)] leading-[1.02] tracking-tight max-w-[14ch]">
                 {t('Probá que tu letra fue tuya primero.')}
               </h1>
               <p className="text-lg leading-relaxed max-w-[52ch]" style={muted}>
@@ -237,7 +236,7 @@ export default async function SoliricLanding() {
         {/* ── Cierre ── */}
         <section className="sol-hero-glow border-t py-24 sm:py-32 text-center" style={line}>
           <div className={`${container} space-y-8`}>
-            <h2 className="font-heading text-4xl sm:text-6xl leading-[1.05] tracking-tight mx-auto max-w-[18ch]" style={{ fontVariationSettings: '"SOFT" 100, "WONK" 1' }}>
+            <h2 className="font-heading text-4xl sm:text-6xl leading-[1.05] tracking-tight mx-auto max-w-[18ch]">
               {t('Tu próxima letra, con una fecha que nadie puede cambiar.')}
             </h2>
             <div className="flex flex-wrap justify-center gap-3">

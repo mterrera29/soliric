@@ -57,7 +57,7 @@ export default async function DevelopersPage() {
     <div className="soliric-landing min-h-dvh">
       <main className="mx-auto w-full max-w-4xl px-5 sm:px-8 py-14 sm:py-20 space-y-16">
         <header className="space-y-5">
-          <h1 className="font-heading text-[clamp(2.1rem,5vw,3.6rem)] leading-[1.05] tracking-tight max-w-[18ch]" style={{ fontVariationSettings: '"SOFT" 100, "WONK" 1' }}>
+          <h1 className="font-heading text-[clamp(2.1rem,5vw,3.6rem)] leading-[1.05] tracking-tight max-w-[18ch]">
             Register authorship from your own app.
           </h1>
           <p className="text-lg leading-relaxed max-w-[60ch]" style={muted}>

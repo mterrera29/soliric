@@ -32,15 +32,14 @@
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-figtree), -apple-system, BlinkMacSystemFont, sans-serif;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
 
 .font-heading {
-  font-family: var(--font-fraunces), Georgia, serif;
-  font-weight: 600;
-  font-variation-settings: 'SOFT' 100, 'WONK' 0;
+  font-family: var(--font-young-serif), Georgia, serif;
+  font-weight: 400; /* Young Serif tiene un solo peso: pedir negrita la deformaría */
 }
 
 ::-webkit-scrollbar { width: 6px; }

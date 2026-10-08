@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LogIn, LogOut, Menu, X } from 'lucide-react';
 import LanguageToggle from './LanguageToggle';
+import Logo from './Logo';
 import { useAuth } from '@/hooks/useAuth';
 import { useT } from '@/hooks/useI18n';
 
@@ -28,7 +29,7 @@ export default function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md border-b" style={{ borderColor: 'rgba(247,239,229,0.12)', background: 'rgba(21,16,13,0.86)' }}>
       <nav className="mx-auto w-full max-w-6xl px-5 sm:px-8 flex items-center justify-between gap-3 h-16" aria-label={t('Principal')}>
-        <Link href="/" className="font-heading text-2xl tracking-tight min-h-11 inline-flex items-center" style={{ color: '#f7efe5' }}>soliric</Link>
+        <Link href="/" aria-label="Soliric" className="min-h-11 inline-flex items-center"><Logo size={26} /></Link>
 
         <div className="hidden lg:flex items-center gap-1" style={{ color: 'rgba(247,239,229,0.74)' }}>
           {links.map((l) => <Link key={l.href} href={l.href} className={linkClass(l.href)} aria-current={active(l.href) ? 'page' : undefined}>{l.label}</Link>)}
