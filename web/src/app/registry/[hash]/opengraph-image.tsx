@@ -24,7 +24,7 @@ export default async function Image({ params }: { params: Promise<{ hash: string
       <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 72, background: 'linear-gradient(135deg, #1d1612 0%, #2b1d14 100%)', color: '#F5EDE3' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, color: '#FDB174', fontSize: 30, letterSpacing: 4, textTransform: 'uppercase' }}>
           <div style={{ width: 18, height: 18, borderRadius: 9, background: '#F58A45', display: 'flex' }} />
-          Soliric · Fogón
+          Soliric
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
           <div style={{ fontSize: title.length > 28 ? 72 : 92, fontWeight: 700, lineHeight: 1.05, display: 'flex' }}>{title}</div>

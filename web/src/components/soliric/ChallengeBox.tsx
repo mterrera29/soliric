@@ -15,7 +15,7 @@ const FIELDS = [
 ] as const;
 
 interface Props {
-  /** Ruta de la API de impugnación, relativa a /api/soliric (por canción o por huella). */
+  /** Ruta de la API de impugnación, relativa a /api (por obra o por huella). */
   endpoint: string;
   /** La última impugnación de quien mira, si se conoce. */
   mine?: { status: string; rejectReason: string | null } | null;

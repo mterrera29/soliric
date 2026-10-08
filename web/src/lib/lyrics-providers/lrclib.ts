@@ -9,7 +9,7 @@ export const lrclibProvider: LyricsProvider = {
         `https://lrclib.net/api/get?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist)}`,
         {
           headers: {
-            'User-Agent': 'lyrics-app/1.0 (https://github.com/mterrera29/cancionero)',
+            'User-Agent': 'soliric/1.0',
             Accept: 'application/json',
           },
         }

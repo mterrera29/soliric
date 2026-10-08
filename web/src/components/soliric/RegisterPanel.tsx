@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { ShieldCheck, Users, User as UserIcon, AlertTriangle, Ban } from 'lucide-react';
 import Spinner from '@/components/Spinner';
+import EmailChips from './EmailChips';
 import { useAuth } from '@/hooks/useAuth';
 import { statementFor } from '@/lib/soliric/work-policy';
 import { soliricFetch, SoliricError } from '@/lib/soliric/client-api';
@@ -11,19 +12,24 @@ import { useI18n } from '@/hooks/useI18n';
 
 interface Props {
   workId: string;
+  /** Coautores cargados en el formulario: si hay, arranca en modo "con coautores". */
+  initialInvites?: string[];
+  /** Nombre del autor con el que se creó la obra. */
+  defaultAuthorName?: string;
   onRegistered: () => void;
 }
 
 const card = { background: 'var(--bg-card)', border: '1px solid var(--border-color)' };
 
 /** Chequeo previo + declaración de autoría + registro on-chain (sola/o o con coautores). */
-export default function RegisterSongDialog({ workId, onRegistered }: Props) {
+export default function RegisterPanel({ workId, initialInvites = [], defaultAuthorName, onRegistered }: Props) {
   const { t, lang } = useI18n();
   const { getToken } = useAuth();
   const [pf, setPf] = useState<PreflightData | null>(null);
-  const [mode, setMode] = useState<'solo' | 'studio'>('solo');
+  const [mode, setMode] = useState<'solo' | 'studio'>(initialInvites.length > 0 ? 'studio' : 'solo');
+  const [invites, setInvites] = useState<string[]>(initialInvites);
   const { userDisplayName } = useAuth();
-  const [authorName, setAuthorName] = useState(userDisplayName ?? '');
+  const [authorName, setAuthorName] = useState(defaultAuthorName ?? userDisplayName ?? '');
   const [attest, setAttest] = useState(false);
   const [reinforced, setReinforced] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -45,7 +51,7 @@ export default function RegisterSongDialog({ workId, onRegistered }: Props) {
     setBusy(true);
     setError('');
     try {
-      await soliricFetch(getToken, `works/${workId}/register`, { body: { mode, attest, reinforced, authorName, lang } });
+      await soliricFetch(getToken, `works/${workId}/register`, { body: { mode, attest, reinforced, authorName, lang, invites: mode === 'studio' ? invites : [] } });
       onRegistered();
     } catch (e) {
       setError((e as Error).message);
@@ -64,7 +70,7 @@ export default function RegisterSongDialog({ workId, onRegistered }: Props) {
   }
 
   const blocked = pf && !pf.registrable;
-  const canSubmit = !!pf?.registrable && attest && (!pf.needsReinforced || reinforced) && !busy;
+  const canSubmit = !!pf?.registrable && attest && (!pf.needsReinforced || reinforced) && !busy && (mode === 'solo' || invites.length > 0);
 
   return (
     <div className="p-6 space-y-5">
@@ -115,13 +121,21 @@ export default function RegisterSongDialog({ workId, onRegistered }: Props) {
               ['studio', t('Con coautores'), t('Invitás a otras personas, el reparto sale de los aportes de cada una.'), <Users key="s" className="w-5 h-5" />],
             ] as const).map(([value, title, text, icon]) => (
               <label key={value} className="rounded-xl p-4 cursor-pointer transition-all"
-                style={{ ...card, ...(mode === value ? { borderColor: 'var(--fogon, #F58A45)', boxShadow: '0 0 0 1px #F58A45' } : {}) }}>
+                style={{ ...card, ...(mode === value ? { borderColor: '#F58A45', boxShadow: '0 0 0 1px #F58A45' } : {}) }}>
                 <input type="radio" name="mode" className="sr-only" checked={mode === value} onChange={() => setMode(value)} />
                 <span className="flex items-center gap-2 font-semibold text-sm text-warm-tan">{icon}{title}</span>
                 <span className="block text-xs mt-1.5" style={{ color: 'var(--text-secondary)' }}>{text}</span>
               </label>
             ))}
           </fieldset>
+
+          {mode === 'studio' && (
+            <div className="space-y-2.5" aria-label={t('Coautores')}>
+              <span className="block text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>{t('Coautores')}</span>
+              <EmailChips value={invites} onChange={setInvites} />
+              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('Cada persona recibe una invitación y entra con su cuenta de Google. El reparto sale de lo que aporta cada una.')}</p>
+            </div>
+          )}
 
           <label className="block text-sm">
             <span className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-secondary)' }}>{t('Nombre del autor')}</span>

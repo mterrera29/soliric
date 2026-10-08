@@ -251,7 +251,7 @@ export async function preflight(record: WorkRow): Promise<PreflightResult> {
 
 export async function registerWork(
   record: WorkRow, actor: Actor,
-  opts: { mode: 'solo' | 'studio'; attest: boolean; reinforced: boolean; authorName?: string; lang?: 'en' | 'es' },
+  opts: { mode: 'solo' | 'studio'; attest: boolean; reinforced: boolean; authorName?: string; lang?: 'en' | 'es'; invites?: string[] },
 ) {
   if (record.workPda) throw new ApiError(409, 'Esta canción ya está registrada.');
   if (!opts.attest) throw new ApiError(400, 'Tenés que aceptar la declaración de autoría.');
@@ -299,7 +299,15 @@ export async function registerWork(
     fingerprint: pf.fingerprint, workPda: pda.toBase58(), onchainStatus: work.status,
     registeredAt: new Date(),
   }).where(eq(works.id, record.id));
-  return { signature: sig, work };
+  // Coautores: se invita a cada email (si alguno falla, el registro igual quedó hecho)
+  const inviteErrors: { email: string; error: string }[] = [];
+  if (!solo) {
+    const registered = { ...record, fingerprint: pf.fingerprint, workPda: pda.toBase58(), onchainStatus: work.status };
+    for (const email of opts.invites ?? []) {
+      try { await invite(registered, email); } catch (e) { inviteErrors.push({ email, error: (e as Error).message }); }
+    }
+  }
+  return { signature: sig, work, inviteErrors };
 }
 
 /* ---------- colaboración ---------- */

@@ -14,6 +14,7 @@ export async function POST(request: Request, { params }: Ctx) {
       mode: body.mode, attest: body.attest === true, reinforced: body.reinforced === true,
       authorName: typeof body.authorName === 'string' ? body.authorName : undefined,
       lang: body.lang === 'es' ? 'es' : 'en',
+      invites: Array.isArray(body.invites) ? body.invites.filter((e: unknown): e is string => typeof e === 'string').slice(0, 8) : [],
     });
   });
 }

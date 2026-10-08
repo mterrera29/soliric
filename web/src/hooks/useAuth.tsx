@@ -32,6 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loginInProgress, setLoginInProgress] = useState(false);
 
   useEffect(() => {
+    if (!auth) { setTimeout(() => setLoading(false), 0); return; } // sin Firebase configurado: no hay login
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
@@ -40,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function login() {
-    if (loginInProgress) return;
+    if (loginInProgress || !auth) return;
     setLoginInProgress(true);
     try {
       const provider = new GoogleAuthProvider();
@@ -51,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function logout() {
-    await signOut(auth);
+    if (auth) await signOut(auth);
   }
 
   async function getToken() {

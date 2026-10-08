@@ -1,19 +1,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { JetBrains_Mono } from 'next/font/google';
 import { isNotNull, desc, sql } from 'drizzle-orm';
 import { ExternalLink, Gavel, Lock, ScanSearch, ShieldCheck, Users, Globe } from 'lucide-react';
 import { db } from '@/lib/db';
 import { works } from '@/db/schema';
-import LanguageToggle from '@/components/LanguageToggle';
 import HeroSeal from '@/components/soliric/landing/HeroSeal';
 import CopyText from '@/components/soliric/landing/CopyText';
+import CodeBlock from '@/components/soliric/CodeBlock';
 import { PROGRAM_ID, CLUSTER } from '@/lib/soliric/client';
 import { explorerAddr } from '@/lib/soliric/links';
 import { getT } from '@/lib/i18n/server';
 import { localeOf } from '@/lib/i18n';
-
-const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getT();
@@ -50,27 +47,10 @@ export default async function SoliricLanding() {
   const container = 'mx-auto w-full max-w-6xl px-5 sm:px-8';
 
   return (
-    <div className={`soliric-landing ${mono.variable} relative z-10 min-h-dvh overflow-x-clip`}>
+    <div className="soliric-landing relative min-h-dvh overflow-x-clip">
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-white focus:text-black focus:px-3 focus:py-2">
         {t('Saltar al contenido')}
       </a>
-
-      {/* ── Navegación ── */}
-      <header className="sticky top-0 z-40 backdrop-blur-md border-b" style={{ ...line, background: 'rgba(21,16,13,0.82)' }}>
-        <nav className={`${container} flex items-center justify-between gap-4 h-16`} aria-label={t('Principal')}>
-          <Link href="/" className="flex items-baseline gap-2.5 min-h-11 items-center">
-            <span className="font-heading text-2xl tracking-tight">soliric</span>
-            <span className="hidden sm:inline text-[13px]" style={muted}>{t('por Fogón')}</span>
-          </Link>
-          <div className="flex items-center gap-1 sm:gap-2">
-            <Link href="#how" className="hidden md:inline-flex items-center min-h-11 px-3 text-sm rounded-lg hover:bg-white/5" style={muted}>{t('Cómo funciona')}</Link>
-            <Link href="/registry" className="hidden sm:inline-flex items-center min-h-11 px-3 text-sm rounded-lg hover:bg-white/5" style={muted}>{t('Registro')}</Link>
-            <Link href="/verify" className="hidden sm:inline-flex items-center min-h-11 px-3 text-sm rounded-lg hover:bg-white/5" style={muted}>{t('Verificar')}</Link>
-            <LanguageToggle />
-            <Link href="/new" className="sol-btn-primary inline-flex items-center min-h-11 px-4 text-sm">{t('Registrar una letra')}</Link>
-          </div>
-        </nav>
-      </header>
 
       <main id="main">
         {/* ── Hero ── */}
@@ -108,7 +88,7 @@ export default async function SoliricLanding() {
             <div className="space-y-10">
               <div className="grid gap-px rounded-3xl overflow-hidden sm:grid-cols-2" style={{ background: 'var(--l-line)' }}>
                 <div className="p-6 space-y-3" style={{ background: 'var(--l-surface)' }}>
-                  <h3 className="flex items-center gap-2 font-semibold"><Lock className="w-4 h-4 text-[var(--ember-soft)]" aria-hidden /> {t('Se queda en Fogón')}</h3>
+                  <h3 className="flex items-center gap-2 font-semibold"><Lock className="w-4 h-4 text-[var(--ember-soft)]" aria-hidden /> {t('Queda guardado en Soliric, en privado')}</h3>
                   <ul className="space-y-2 text-[15px]" style={muted}>
                     <li>{t('La letra y los acordes')}</li>
                     <li>{t('Tus datos personales')}</li>
@@ -128,7 +108,7 @@ export default async function SoliricLanding() {
 
               <ol className="space-y-6">
                 {([
-                  ['Escribís en Fogón', 'Pegá o escaneá una letra, ponele acordes y editala. Soliric está dentro de la misma app.'],
+                  ['Cargás tu letra', 'Pegá la letra y sumá a tus coautores si los hay, o dejá que lo haga la app que ya usás.'],
                   ['La registrás', 'Sacamos la huella, la firmamos con tu wallet y queda guardada en Solana. No necesitás tener cripto.'],
                   ['Cualquiera la verifica', 'Pegando la letra en el verificador, sin cuenta. La respuesta se lee directo de la cadena.'],
                 ] as const).map(([title, text], i) => (
@@ -235,31 +215,22 @@ export default async function SoliricLanding() {
           </div>
         </section>
 
-        {/* ── Fogón ── */}
+        {/* ── Integraciones ── */}
         <section className="border-t py-20 sm:py-28" style={line}>
           <div className={`${container} grid gap-12 lg:grid-cols-2 items-center`}>
             <div className="space-y-5">
-              <h2 className="font-heading text-3xl sm:text-4xl leading-tight max-w-[18ch]">{t('Todo empieza en Fogón.')}</h2>
+              <h2 className="font-heading text-3xl sm:text-4xl leading-tight max-w-[18ch]">{t('Pensado para enchufarse a cualquier app.')}</h2>
               <p className="leading-relaxed max-w-[52ch]" style={muted}>
-                {t('Soliric vive dentro de Fogón, el estudio para escribir letras con acordes. Pegá o escaneá una letra, editala y registrala sin salir de la página.')}
+                {t('Soliric es un servicio con API abierta. Una app para escribir letras, un sitio de letras o la plataforma de un sello pueden registrar las letras de sus usuarios con una sola llamada. Fogón, la app para escribir letras con acordes, es la primera.')}
               </p>
-              <Link href="/" className="sol-btn-ghost inline-flex items-center min-h-11 px-5 text-sm">{t('Abrir Fogón')}</Link>
+              <Link href="/developers" className="sol-btn-ghost inline-flex items-center min-h-11 px-5 text-sm">{t('Ver la documentación de la API')}</Link>
             </div>
-            <div className="rounded-3xl border p-7 space-y-8" style={{ ...line, background: 'var(--l-surface)' }} role="img" aria-label={t('Ejemplo de una letra con acordes en Fogón')}>
-              {([
-                [['Am', 'Hoy desperté '], ['G', 'con ganas de cantarle '], ['F', 'a la luna']],
-                [['C', 'y la calle vacía '], ['G', 'me ofreció su compañía']],
-              ] as const).map((segments, row) => (
-                <p key={row} className="text-lg leading-[2.4] flex flex-wrap">
-                  {segments.map(([chord, text]) => (
-                    <span key={chord + text} className="relative inline-block pt-5">
-                      <span className="mono absolute left-0 top-0 text-[13px] font-bold text-[var(--ember)]" aria-hidden>{chord}</span>
-                      {t(text)}
-                    </span>
-                  ))}
-                </p>
-              ))}
-            </div>
+            <CodeBlock label="POST /api/v1/works" code={`curl -X POST $SOLIRIC/api/v1/works \\
+  -H "Authorization: Bearer sol_live_…" \\
+  -d '{ "title": "After three",
+        "author": { "name": "Mati", "email": "…" },
+        "lyrics": "I woke up wanting to sing…",
+        "attestation": true }'`} />
           </div>
         </section>
 
@@ -293,7 +264,7 @@ export default async function SoliricLanding() {
           <div className="flex gap-5">
             <Link href="/registry" className="hover:underline">{t('Registro')}</Link>
             <Link href="/verify" className="hover:underline">{t('Verificar')}</Link>
-            <Link href="/" className="hover:underline">Fogón</Link>
+            <Link href="/developers" className="hover:underline">{t('Desarrolladores')}</Link>
           </div>
         </div>
       </footer>

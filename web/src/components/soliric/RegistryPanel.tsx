@@ -30,12 +30,10 @@ function Countdown({ to }: { to: number }) {
 
 interface Props {
   workId: string;
-  /** Texto guardado de la canción: lo que se registra al "Guardar versión" (el dueño). */
-  saved?: { lyrics: string; chords: string };
   onChanged?: () => void;
 }
 
-export default function RegistryPanel({ workId, saved, onChanged }: Props) {
+export default function RegistryPanel({ workId, onChanged }: Props) {
   const t = useT();
   const { getToken } = useAuth();
   const [data, setData] = useState<ChainViewData | null>(null);
@@ -166,20 +164,19 @@ export default function RegistryPanel({ workId, saved, onChanged }: Props) {
       {status === 'open' && isMember && (
         <section className="space-y-3">
           <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>{t('Versiones')}</h3>
-          {!isOwner && data.text && (
+          {data.text && (
             <textarea aria-label={t('Letra')} rows={8} className={input} style={inputStyle} value={latestText}
               onChange={(e) => setDraftLyrics(e.target.value)} />
           )}
           <button disabled={!!busy}
             onClick={() => {
-              const text = isOwner ? saved : data.text && { lyrics: latestText, chords: data.text.chords };
-              if (!text) return setError(t('No hay texto para guardar.'));
-              act('version', 'version', text, t('Versión guardada en la blockchain.'));
+              if (!data.text) return setError(t('No hay texto para guardar.'));
+              act('version', 'version', { lyrics: latestText, chords: data.text.chords }, t('Versión guardada en la blockchain.')).then(() => setDraftLyrics(null));
             }}
             className="w-full rounded-xl py-2.5 text-sm font-semibold bg-terracotta/20 text-warm-tan hover:bg-terracotta/30 disabled:opacity-40 inline-flex items-center justify-center gap-2">
             <Hash className="w-4 h-4" /> {busy === 'version' ? t('Guardando…') : t('Guardar versión on-chain')}
           </button>
-          {isOwner && <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('Registra el texto guardado de la canción. Cada aporte suma al reparto.')}</p>}
+          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('Editá la letra y guardá la versión: cada aporte suma al reparto.')}</p>
         </section>
       )}
 

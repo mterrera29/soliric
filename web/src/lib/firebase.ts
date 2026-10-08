@@ -1,14 +1,17 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, type Auth } from 'firebase/auth';
 
+// Configuración pública del proyecto de Firebase (viene de variables de entorno, no del código)
 const firebaseConfig = {
-  apiKey: "AIzaSyAtAaeUQSNvkM7jN4QlgB0wJH9W4BoK0z0",
-  authDomain: "lyricsapp-76075.firebaseapp.com",
-  projectId: "lyricsapp-76075",
-  storageBucket: "lyricsapp-76075.firebasestorage.app",
-  messagingSenderId: "641770859748",
-  appId: "1:641770859748:web:0e54f7f9c002954d82d0f1"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+/** `null` si falta la configuración: la web sigue funcionando (verificar, registro público) pero sin login. */
+export const auth: Auth | null = firebaseConfig.apiKey
+  ? getAuth(getApps().length ? getApps()[0] : initializeApp(firebaseConfig))
+  : null;

@@ -39,7 +39,7 @@ export default function CollaborationsPage() {
         {!items && !error && <Spinner />}
         {items?.length === 0 && <p style={{ color: 'var(--text-secondary)' }}>{t('Todavía nadie te invitó a una canción.')}</p>}
         {items?.map((i) => (
-          <Link key={i.workId} href={`/collaborations/${i.workId}`} className="block rounded-2xl p-4 hover:bg-white/5 transition-colors"
+          <Link key={i.workId} href={`/works/${i.workId}`} className="block rounded-2xl p-4 hover:bg-white/5 transition-colors"
             style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
             <p className="font-semibold" style={{ color: 'var(--text-primary)' }}>{i.title}</p>
             <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>

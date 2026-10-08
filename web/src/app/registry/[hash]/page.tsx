@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, ExternalLink, FileSearch, Music2, ShieldCheck, ShieldAlert, ShieldX, Hourglass } from 'lucide-react';
+import { ArrowLeft, ExternalLink, FileSearch, ShieldCheck, ShieldAlert, ShieldX, Hourglass } from 'lucide-react';
 import ChallengeBox from '@/components/soliric/ChallengeBox';
 import ShareButton from '@/components/soliric/ShareButton';
 import StatusBadge from '@/components/soliric/StatusBadge';
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = t('{status} desde el {date}. Verificable por cualquiera en la blockchain de Solana.', { status: t(STATUS_LABEL[reg.work.status]), date: fmt(reg.work.createdAt, localeOf(lang)) });
   return {
     ...base, title, description,
-    openGraph: { title, description, type: 'website', siteName: 'Fogón · Soliric', url: `/registry/${reg.fingerprint}` },
+    openGraph: { title, description, type: 'website', siteName: 'Soliric', url: `/registry/${reg.fingerprint}` },
     twitter: { card: 'summary_large_image', title, description },
   };
 }
@@ -119,11 +119,6 @@ export default async function RegistrationPage({ params }: Props) {
             <Link href="/verify" className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold bg-terracotta/20 text-warm-tan hover:bg-terracotta/30 transition-colors">
               <FileSearch className="w-4 h-4" /> {t('Verificar una letra')}
             </Link>
-            {listing && (
-              <Link href={`/works/${listing.id}`} className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold bg-terracotta/20 text-warm-tan hover:bg-terracotta/30 transition-colors">
-                <Music2 className="w-4 h-4" /> {t('Ver la canción')}
-              </Link>
-            )}
           </div>
 
           <footer className="flex flex-wrap gap-x-5 gap-y-2 pt-4 text-xs" style={{ borderTop: '1px solid var(--border-color)' }}>

@@ -60,7 +60,7 @@ export default function WalletPage() {
       <div className="max-w-2xl mx-auto space-y-6">
         <header>
           <h1 className="text-3xl font-heading mb-2 flex items-center gap-3" style={{ color: 'var(--text-primary)' }}><Wallet className="w-7 h-7 text-ember-light" /> {t('Mi wallet')}</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>{t('Fogón creó una wallet de Solana para vos y firma tus registros. Si querés, podés llevarte la clave a Phantom.')}</p>
+          <p style={{ color: 'var(--text-secondary)' }}>{t('Soliric creó una wallet de Solana para vos y firma tus registros. Si querés, podés llevarte la clave a Phantom.')}</p>
         </header>
         {!info && !error && <Spinner />}
         {info && (

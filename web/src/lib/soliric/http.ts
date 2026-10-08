@@ -1,9 +1,15 @@
 import { NextResponse } from 'next/server';
+import { translate, type Lang } from '@/lib/i18n';
 
 export class ApiError extends Error {
   constructor(public status: number, message: string, public extra: Record<string, unknown> = {}) {
     super(message);
   }
+}
+
+/** Respuesta con un código distinto de 200 (por ejemplo 201 al crear). */
+export class Created<T> {
+  constructor(public body: T, public status = 201) {}
 }
 
 /** Falta configuración del servidor (variables de entorno): se informa tal cual, no como error genérico. */
@@ -18,18 +24,21 @@ export function chainError(e: unknown): string {
 }
 
 /** Envuelve un handler: traduce ApiError, respuestas lanzadas (auth) y errores inesperados. */
-export async function handle(fn: () => Promise<unknown>): Promise<NextResponse> {
+export async function handle(fn: () => Promise<unknown>, opts: { lang?: Lang } = {}): Promise<NextResponse> {
+  const msg = (m: string) => (opts.lang ? translate(opts.lang, m) : m);
   try {
-    return NextResponse.json(await fn());
+    const out = await fn();
+    if (out instanceof Created) return NextResponse.json(out.body, { status: out.status });
+    return NextResponse.json(out);
   } catch (e) {
     if (e instanceof NextResponse) return e;
     if (e instanceof ConfigError) {
       console.error('[soliric] configuración', e.message);
-      return NextResponse.json({ error: `El registro on-chain no está configurado: ${e.message}` }, { status: 503 });
+      return NextResponse.json({ error: msg(`El registro on-chain no está configurado: ${e.message}`) }, { status: 503 });
     }
-    if (e instanceof ApiError) return NextResponse.json({ error: e.message, ...e.extra }, { status: e.status });
+    if (e instanceof ApiError) return NextResponse.json({ error: msg(e.message), ...e.extra }, { status: e.status });
     console.error('[soliric]', e);
-    return NextResponse.json({ error: 'Error inesperado en el registro on-chain' }, { status: 500 });
+    return NextResponse.json({ error: msg('Error inesperado en el registro on-chain') }, { status: 500 });
   }
 }
 
