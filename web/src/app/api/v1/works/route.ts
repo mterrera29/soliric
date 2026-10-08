@@ -59,7 +59,7 @@ export async function POST(request: Request) {
       await db.delete(works).where(eq(works.id, id));
       throw e;
     }
-  }, { lang: 'en' }));
+  }, { lang: 'en', omit: ['preflight'] }));
 }
 
 /** Obras de esta app (las últimas 50), o la que tenga ese `externalRef`. */

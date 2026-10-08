@@ -25,14 +25,14 @@ function templateList() {
   }));
 }
 
-export function translate(lang: Lang, key: string, params?: Params): string {
+export function translate(lang: Lang, key: string, params?: Params, depth = 0): string {
   if (lang === 'es') return interpolate(key, params);
   const direct = EN[key];
   if (direct !== undefined) return interpolate(direct, params);
   if (!params) {
     for (const t of templateList()) {
       const m = key.match(t.re);
-      if (m) return interpolate(t.en, Object.fromEntries(t.names.map((n, i) => [n, EN[m[i + 1]] !== undefined ? EN[m[i + 1]] : m[i + 1]])));
+      if (m) return interpolate(t.en, Object.fromEntries(t.names.map((n, i) => [n, depth < 1 ? translate(lang, m[i + 1], undefined, depth + 1) : m[i + 1]])));
     }
   }
   return interpolate(key, params);

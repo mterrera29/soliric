@@ -24,7 +24,8 @@ export default function HeroSeal() {
   const sample = t('Hoy desperté con ganas de cantarle a la luna\ny la calle vacía me ofreció su compañía');
   const [text, setText] = useState(sample);
   const [original, setOriginal] = useState('');
-  const [shown, setShown] = useState(() => randomHex());
+  // valor inicial fijo: el servidor y el navegador tienen que renderizar lo mismo (el azar solo se usa al animar)
+  const [shown, setShown] = useState('0'.repeat(64));
   const [real, setReal] = useState('');
   const [live, setLive] = useState(false);
   const [unsupported, setUnsupported] = useState(false);

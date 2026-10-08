@@ -258,10 +258,13 @@ export async function registerWork(
 
   const pf = await preflight(record);
   if (pf.freeLeft === 0) throw new ApiError(402, pf.reason ?? 'Sin registros gratuitos.', { code: 'quota', preflight: pf });
-  if (!pf.registrable) throw new ApiError(pf.duplicate ? 409 : 422, pf.reason ?? 'No se puede registrar.', { preflight: pf });
+  if (!pf.registrable) {
+    const code = pf.duplicate ? 'duplicate' : pf.catalog.verdict === 'block' ? 'copy_detected' : 'not_registrable';
+    throw new ApiError(pf.duplicate ? 409 : 422, pf.reason ?? 'No se puede registrar.', { code, preflight: pf, similarTo: pf.similarTo });
+  }
   if (pf.needsReinforced && !opts.reinforced) {
     throw new ApiError(422, 'Confirmá de nuevo que la letra es tuya: no pudimos descartar que exista en un catálogo.', {
-      preflight: pf, needsReinforced: true,
+      code: 'needs_review', preflight: pf, needsReinforced: true,
     });
   }
 

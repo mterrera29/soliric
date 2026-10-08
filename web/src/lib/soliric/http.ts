@@ -24,7 +24,7 @@ export function chainError(e: unknown): string {
 }
 
 /** Envuelve un handler: traduce ApiError, respuestas lanzadas (auth) y errores inesperados. */
-export async function handle(fn: () => Promise<unknown>, opts: { lang?: Lang } = {}): Promise<NextResponse> {
+export async function handle(fn: () => Promise<unknown>, opts: { lang?: Lang; omit?: string[] } = {}): Promise<NextResponse> {
   const msg = (m: string) => (opts.lang ? translate(opts.lang, m) : m);
   try {
     const out = await fn();
@@ -36,7 +36,10 @@ export async function handle(fn: () => Promise<unknown>, opts: { lang?: Lang } =
       console.error('[soliric] configuración', e.message);
       return NextResponse.json({ error: msg(`El registro on-chain no está configurado: ${e.message}`) }, { status: 503 });
     }
-    if (e instanceof ApiError) return NextResponse.json({ error: msg(e.message), ...e.extra }, { status: e.status });
+    if (e instanceof ApiError) {
+      const extra = Object.fromEntries(Object.entries(e.extra).filter(([k]) => !opts.omit?.includes(k)));
+      return NextResponse.json({ error: msg(e.message), ...extra }, { status: e.status });
+    }
     console.error('[soliric]', e);
     return NextResponse.json({ error: msg('Error inesperado en el registro on-chain') }, { status: 500 });
   }
