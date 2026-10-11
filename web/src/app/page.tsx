@@ -135,6 +135,7 @@ export default async function SoliricLanding() {
                   <p className="max-w-[56ch] leading-relaxed" style={muted}>{t('Invitás a tus coautores. El reparto sale de lo que aportó cada uno y todos tienen un plazo para objetarlo antes de que quede firme.')}</p>
                 </div>
                 <div className="space-y-3" role="img" aria-label={t('Ejemplo: Ana 62 por ciento, Leo 38 por ciento, ambos firmaron')}>
+                  <p className="mono text-xs" style={muted}>{t('Ejemplo')}</p>
                   {([['Ana', 62], ['Leo', 38]] as const).map(([name, pct]) => (
                     <div key={name} className="space-y-1.5">
                       <div className="flex items-center justify-between text-sm"><span>{name}</span><span className="mono inline-flex items-center gap-2">{pct} % <ShieldCheck className="w-4 h-4 text-[var(--sol-green)]" aria-hidden /></span></div>
@@ -148,7 +149,7 @@ export default async function SoliricLanding() {
                 <h3 className="flex items-center gap-2 text-xl font-heading"><ScanSearch className="w-5 h-5 text-[var(--ember-soft)]" aria-hidden /> {t('Detecta las copias')}</h3>
                 <p className="leading-relaxed" style={muted}>{t('Antes de registrar, compara con catálogos públicos y con todo lo ya registrado, aunque cambien una coma o una palabra.')}</p>
                 <p className="mono rounded-2xl p-4 text-[13px] leading-relaxed" style={{ background: 'var(--l-bg)' }}>
-                  {t('Una palabra de más')}<br /><span className="text-[var(--ember-soft)]">97 % {t('de coincidencia')}</span> · {t('bloqueada')}
+                  {t('Ejemplo')}: {t('Una palabra de más')}<br /><span className="text-[var(--ember-soft)]">97 % {t('de coincidencia')}</span> · {t('bloqueada')}
                 </p>
               </article>
 

@@ -12,6 +12,17 @@ It is a **service with an open API**, not a closed app: songwriting tools, lyric
 
 ---
 
+## Try it
+
+Live on Solana **devnet**: **https://soliric.vercel.app** (no wallet or SOL needed).
+
+1. **Browse the registry** at [/registry](https://soliric.vercel.app/registry). No account needed.
+2. **Register a lyric.** Sign in with Google, open *Register a lyric*, fill in a title, author and a lyric (use a new one: a lyric already registered is rejected as a duplicate), optionally add a co-author's e-mail, accept the declaration and register. You get 3 free registrations. A few seconds later the record page shows the date, the status and the fingerprint, with a link to the transaction on the Solana Explorer.
+3. **Verify.** Open [/verify](https://soliric.vercel.app/verify) and paste the same lyric, with one extra word. It still matches.
+4. **Use the API.** Signed-in users can create a key in [/developers](https://soliric.vercel.app/developers) and call `POST /api/v1/works`.
+
+The program on the Explorer: [`5LWoTgRR5HD4pkPq4qQ38BEeaVfd6Uuvs3Svkm6X3MTJ`](https://explorer.solana.com/address/5LWoTgRR5HD4pkPq4qQ38BEeaVfd6Uuvs3Svkm6X3MTJ?cluster=devnet).
+
 ## The problem
 
 A songwriter has no cheap, fast way to put on record that a lyric was theirs on a given date. Formal copyright registries are slow and expensive, and e-mailing yourself a draft is weak evidence. Meanwhile nothing stops someone from registering a lyric that isn't theirs.
@@ -118,6 +129,33 @@ Vercel (root `web/`) + Neon + the devnet program. Set the env vars above plus `N
 - Dispute deposits and paid plans (the cost model above) are designed but not enabled.
 - Runs on Solana **devnet**.
 
+## Security and audit status
+
+- **Not audited.** The Anchor program and the web service have had no external audit. Tests: 19 LiteSVM tests for the program and 37 unit tests for the web service.
+- **Devnet only.** Nothing runs on mainnet and no user funds are at risk. The SOL in the wallets comes from a devnet treasury.
+- **Known material risks**
+  - Wallets are **custodial**: the server holds each author's key, encrypted with AES-256-GCM (`WALLET_ENC_KEY`). If that key and the database leaked together, the wallets would be exposed.
+  - **One arbiter key** (the treasury) resolves disputes. There is no committee or on-chain vote yet.
+  - Fee sponsorship is capped (0.05 SOL per user, 1 SOL per day) so a bug or abuse cannot drain the treasury.
+  - Partner API keys are shown once and stored as SHA-256 hashes; each partner has a daily registration limit. Disputes are rate-limited per account.
+- **Privacy by design.** The lyric text never goes on-chain, only its SHA-256 fingerprint, the date, the authors' wallets and the split. The text stays in a private database.
+- The registry records who *declared* what and when. It is not a certificate that nobody wrote the lyric before.
+
+## Disclosures
+
+**Prior work and what was built when.** This repository starts on 2026-10-08. Before it existed:
+- The Anchor program prototype (14 tests), a first Express server and a vanilla web front end existed by 2026-10-03, in a separate working folder.
+- On 2026-10-07 the program gained the public dispute window for solo works, challenges with an arbiter and events, and was deployed to devnet.
+- Fogón, a songwriting app by the same author (first commit 2026-05-14), is a separate, older product. It is not part of this submission. It is used in the demo as the first client of the API, and it is the author's own app, not an independent customer.
+
+Built in this repository (see `CHANGELOG.md` and the commit history): the standalone web app and public API, the developer portal, near-duplicate detection and catalog checks, the dispute triage flow, co-authors through the API, English and Spanish interfaces, the brand, and the deployment.
+
+**Material use of AI.** Most of the code was written by an AI coding assistant (Claude Code) working under the author's direction. The author decided the product and its rules (what is registered, what stays private, the dispute triage, the split between compositions and other people's lyrics, Soliric as a standalone service), ran and tested the flows on devnet, funded the treasury, and set up the database, authentication and hosting.
+
+**Third-party and open-source components:** Anchor, `@solana/web3.js`, LiteSVM, Next.js, React, Tailwind CSS, Drizzle ORM, Neon (Postgres), Firebase Authentication, Vercel, and the fonts Young Serif, Figtree and JetBrains Mono (SIL Open Font License). Lyric catalog checks call Genius, lrclib, Musixmatch and lyrics.ovh.
+
+**Funding and revenue:** none. **Users:** none outside the author's own testing; the public registry holds test registrations.
+
 ## Credits
 
-Built for a Solana hackathon. Developed with AI assistance (Claude Code). The Anchor program and the first prototype were written first; the web app, partner API and this repository were built afterwards.
+Built for a Solana hackathon by Matías Gabriel Terrera, developed with AI assistance (Claude Code). The Anchor program and the first prototype were written first; the web app, partner API and this repository were built afterwards.

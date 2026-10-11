@@ -470,4 +470,5 @@ export const EN: Record<string, string> = {
   'Dejá registrado que la escribiste vos, y cuándo.': 'Put on record that you wrote it, and when.',
   'Soliric sella en Solana tu declaración de autoría con fecha, autores y reparto, sin publicar una sola palabra. Cualquiera puede comprobarlo, sin cuenta.': 'Soliric seals your authorship declaration on Solana with a date, the authors and the split, without publishing a single word. Anyone can check it, no account needed.',
   'Deja constancia en Solana de que la escribiste, cuándo y con quién.': 'Record on Solana that you wrote it, when, and with whom.',
+  'Ejemplo': 'Example',
 };
