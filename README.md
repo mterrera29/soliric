@@ -1,6 +1,8 @@
 # Soliric
 
-**Prove your lyrics were yours first.** Soliric registers the authorship of a lyric on Solana — the date, the authors and their split — without publishing a single word. Anyone can verify a registration, with no account.
+**Put on record that you wrote it — and when.** Soliric seals a signed declaration of authorship on Solana — the date, the authors and their split — without publishing a single word. Anyone can verify a registration, with no account.
+
+> **What a registration is.** A dated, signed declaration: *this person said they wrote this lyric, with these co-authors, on this date* — fixed on-chain where nobody can change it afterwards. It is not a certificate that no one else wrote it first; that is what the disputes layer below is for.
 
 It is a **service with an open API**, not a closed app: songwriting tools, lyrics sites or label platforms can register their users' lyrics with one HTTP call.
 
@@ -12,7 +14,7 @@ It is a **service with an open API**, not a closed app: songwriting tools, lyric
 
 ## The problem
 
-A songwriter has no cheap, fast way to prove a lyric was theirs on a given date. Formal copyright registries are slow and expensive, and e-mailing yourself a draft is weak evidence. Meanwhile nothing stops someone from registering a lyric that isn't theirs.
+A songwriter has no cheap, fast way to put on record that a lyric was theirs on a given date. Formal copyright registries are slow and expensive, and e-mailing yourself a draft is weak evidence. Meanwhile nothing stops someone from registering a lyric that isn't theirs.
 
 ## What Soliric does
 
@@ -52,8 +54,23 @@ Invite co-authors by e-mail. The split is computed from each person's contributi
 - **Sponsored fees.** The treasury funds each wallet *exactly* what an action needs, with a per-user cap and a global daily budget. Each author gets 3 free registrations.
 - **Public API for partner apps.** API keys are shown once and stored hashed. See `/developers` in the app, or `web/src/app/api/v1`.
 
-### On-chain program (`programs/lyrics_solana`)
-`create_work`, `add_collaborator`, `accept_invite`, `commit_version`, `propose_split`, `sign_split`, `object`, `finalize`, `reopen`, `set_license`, `create_derivative`, `init_config`, `set_arbiter`, `challenge`, `resolve_challenge`. Accounts: `Work`, `Version`, `Challenge`, `Config`. Events are emitted for creation, versions, finalization and disputes. 19 LiteSVM tests cover the flows above.
+### How Soliric uses Solana
+
+| | |
+|---|---|
+| **Program (devnet)** | [`5LWoTgRR5HD4pkPq4qQ38BEeaVfd6Uuvs3Svkm6X3MTJ`](https://explorer.solana.com/address/5LWoTgRR5HD4pkPq4qQ38BEeaVfd6Uuvs3Svkm6X3MTJ?cluster=devnet) |
+| **A real registration** | [public record with its transaction](https://soliric.vercel.app/registry/9059fe7507bfed618cd86fc1490a4d501149a5f638778efc86a4e435def40094) |
+| **Framework** | Anchor 1.2, tested with LiteSVM (19 tests) |
+
+- **One PDA per work.** The address is derived from the SHA-256 fingerprint of the normalized lyric, so the same lyric can never be registered twice. Accounts: `Work`, `Version`, `Challenge`, `Config`.
+- **16 instructions:** `create_work`, `add_collaborator`, `accept_invite`, `remove_invite`, `commit_version`, `propose_split`, `sign_split`, `object`, `finalize`, `reopen`, `set_license`, `create_derivative`, `init_config`, `set_arbiter`, `challenge`, `resolve_challenge`. Events are emitted for creation, versions, finalization and disputes.
+- **Memo program.** Each registration also writes a memo that seals the hash of the title, author and date metadata and the hash of the signed declaration, so neither can be changed later.
+- **Fee sponsorship.** A treasury keypair funds each author's wallet with exactly what an action needs (per-user cap and a daily budget), so authors need no SOL.
+- **Where to look in the code**
+  - `programs/lyrics_solana/src/lib.rs`: the Anchor program. `programs/lyrics_solana/tests/test_initialize.rs`: the LiteSVM tests.
+  - `web/src/lib/soliric/idl.json` and `client.ts`: the generated IDL and the Anchor client (`@anchor-lang/core` with `@solana/web3.js`).
+  - `web/src/lib/soliric/service.ts`: `registerWork`, `finalizeIfDue`, the dispute functions. `sponsor.ts` and `sponsor-policy.ts`: fee sponsorship. `verify.ts`: reads registrations back from the chain.
+  - `web/src/app/api/v1/works/route.ts`: the public API that partner apps call.
 
 ## Costs (measured on devnet)
 

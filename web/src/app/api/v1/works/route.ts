@@ -31,6 +31,13 @@ export async function POST(request: Request) {
       throw new ApiError(422, 'Esta canción se importó de otra fuente: es de otro autor y no se puede registrar.', { code: 'imported' });
     }
 
+    // Coautores (opcional): se los invita por email y la obra queda abierta hasta que acuerden el reparto
+    const coauthors = Array.isArray(body.coauthors) ? body.coauthors : [];
+    const invites = [...new Set(coauthors.map((c: unknown) => String((c as { email?: unknown })?.email ?? c ?? '').trim().toLowerCase()).filter(Boolean))] as string[];
+    if (invites.length > 7) throw new ApiError(400, 'At most 7 co-authors.', { code: 'too_many_coauthors' });
+    const badInvite = invites.find((e) => !isEmail(e) || e === email);
+    if (badInvite) throw new ApiError(400, `Invalid co-author e-mail: ${badInvite}`, { code: 'invalid_coauthor' });
+
     const externalRef = typeof body.externalRef === 'string' && body.externalRef.trim() ? body.externalRef.trim().slice(0, 200) : null;
     if (externalRef) {
       const [existing] = await db.select().from(works).where(and(eq(works.partnerId, partner.id), eq(works.externalRef, externalRef))).limit(1);
@@ -50,7 +57,7 @@ export async function POST(request: Request) {
     try {
       const record = await loadWork(id);
       const result = await registerWork(record, { uid, email, name }, {
-        mode: 'solo', attest: true, reinforced: body.acknowledgeCatalogReview === true, authorName: name, lang: body.lang === 'es' ? 'es' : 'en',
+        mode: invites.length ? 'studio' : 'solo', invites, attest: true, reinforced: body.acknowledgeCatalogReview === true, authorName: name, lang: body.lang === 'es' ? 'es' : 'en',
       });
       const fresh = await loadWork(id);
       return new Created({ ...workSummary(fresh, request), signature: result.signature });

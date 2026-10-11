@@ -14,8 +14,8 @@ import { localeOf } from '@/lib/i18n';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getT();
-  const title = t('Soliric · Probá que tu letra fue tuya primero');
-  const description = t('Soliric sella en Solana la huella de tu canción: fecha, autores y reparto, sin publicar una sola palabra.');
+  const title = t('Soliric · Dejá registrado que la escribiste vos');
+  const description = t('Soliric sella en Solana tu declaración de autoría: fecha, autores y reparto, sin publicar una sola palabra.');
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
     title, description,
@@ -58,10 +58,10 @@ export default async function SoliricLanding() {
           <div className={`${container} grid gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-14 items-center py-16 sm:py-24`}>
             <div className="space-y-7">
               <h1 className="font-heading text-[clamp(2.4rem,6.2vw,4.7rem)] leading-[1.02] tracking-tight max-w-[14ch]">
-                {t('Probá que tu letra fue tuya primero.')}
+                {t('Dejá registrado que la escribiste vos, y cuándo.')}
               </h1>
               <p className="text-lg leading-relaxed max-w-[52ch]" style={muted}>
-                {t('Soliric sella en Solana la huella de tu canción: fecha, autores y reparto, sin publicar una sola palabra. Cualquiera puede comprobarlo, sin cuenta.')}
+                {t('Soliric sella en Solana tu declaración de autoría con fecha, autores y reparto, sin publicar una sola palabra. Cualquiera puede comprobarlo, sin cuenta.')}
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link href="/new" className="sol-btn-primary inline-flex items-center min-h-12 px-6 text-base">{t('Registrar mi letra')}</Link>

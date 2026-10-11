@@ -78,7 +78,7 @@ export default function RegisterPanel({ workId, initialInvites = [], defaultAuth
         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-ember/15 text-ember-light"><ShieldCheck className="w-5 h-5" /></span>
         <div>
           <h2 className="text-xl font-heading" style={{ color: 'var(--text-primary)' }}>{t('Registrar en Soliric')}</h2>
-          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('Deja constancia en Solana de que esta letra es tuya.')}</p>
+          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('Deja constancia en Solana de que la escribiste, cuándo y con quién.')}</p>
         </div>
       </header>
 

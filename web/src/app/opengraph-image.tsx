@@ -16,7 +16,7 @@ export default async function Image() {
           <LogoMark size={168} />
           <div style={{ display: 'flex', fontSize: 168, letterSpacing: -2, lineHeight: 1, fontFamily: fonts ? 'Young Serif' : undefined }}>soliric</div>
         </div>
-        <div style={{ display: 'flex', fontSize: 40, color: 'rgba(247,239,229,0.74)' }}>Prove your lyrics were yours first.</div>
+        <div style={{ display: 'flex', fontSize: 40, color: 'rgba(247,239,229,0.74)' }}>Put on record that you wrote it, and when.</div>
         <div style={{ display: 'flex', fontSize: 28, color: BRAND.dark.chain }}>Authorship registered on Solana</div>
       </div>
     ),
