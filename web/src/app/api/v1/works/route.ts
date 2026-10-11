@@ -33,10 +33,16 @@ export async function POST(request: Request) {
 
     // Coautores (opcional): se los invita por email y la obra queda abierta hasta que acuerden el reparto
     const coauthors = Array.isArray(body.coauthors) ? body.coauthors : [];
-    const invites = [...new Set(coauthors.map((c: unknown) => String((c as { email?: unknown })?.email ?? c ?? '').trim().toLowerCase()).filter(Boolean))] as string[];
+    const seen = new Set<string>();
+    const invites: { email: string; name?: string }[] = [];
+    for (const c of coauthors as unknown[]) {
+      const email = String((c as { email?: unknown })?.email ?? c ?? '').trim().toLowerCase();
+      const cname = typeof (c as { name?: unknown })?.name === 'string' ? ((c as { name: string }).name.trim().slice(0, 80)) : '';
+      if (email && !seen.has(email)) { seen.add(email); invites.push({ email, ...(cname ? { name: cname } : {}) }); }
+    }
     if (invites.length > 7) throw new ApiError(400, 'At most 7 co-authors.', { code: 'too_many_coauthors' });
-    const badInvite = invites.find((e) => !isEmail(e) || e === email);
-    if (badInvite) throw new ApiError(400, `Invalid co-author e-mail: ${badInvite}`, { code: 'invalid_coauthor' });
+    const badInvite = invites.find((i) => !isEmail(i.email) || i.email === email);
+    if (badInvite) throw new ApiError(400, `Invalid co-author e-mail: ${badInvite.email}`, { code: 'invalid_coauthor' });
 
     const externalRef = typeof body.externalRef === 'string' && body.externalRef.trim() ? body.externalRef.trim().slice(0, 200) : null;
     if (externalRef) {

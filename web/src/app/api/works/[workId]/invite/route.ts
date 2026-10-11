@@ -9,7 +9,7 @@ export async function POST(request: Request, { params }: Ctx) {
     const actor = await verifyFirebaseToken(request);
     const record = await loadOwnedWork((await params).workId, actor);
     const body = await request.json().catch(() => ({}));
-    return invite(record, String(body.email ?? ''));
+    return invite(record, String(body.email ?? ''), typeof body.name === 'string' ? body.name : undefined);
   });
 }
 

@@ -61,6 +61,10 @@ export const workInvites = pgTable('work_invites', {
   workId: text('work_id').notNull(),
   email: text('email').notNull(),
   status: text('status').notNull().default('pending'), // pending | accepted
+  // Nombre con el que se muestra al coautor: el que escribió quien invitó, o el de su cuenta de Google al aceptar
+  name: text('name'),
+  // Wallet que se le creó al aceptar: vincula el nombre con la dirección que aparece en la cadena
+  wallet: text('wallet'),
   createdAt: timestamp('created_at').defaultNow(),
 }, (t) => [primaryKey({ columns: [t.workId, t.email] })]);
 

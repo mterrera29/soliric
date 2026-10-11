@@ -251,7 +251,7 @@ export async function preflight(record: WorkRow): Promise<PreflightResult> {
 
 export async function registerWork(
   record: WorkRow, actor: Actor,
-  opts: { mode: 'solo' | 'studio'; attest: boolean; reinforced: boolean; authorName?: string; lang?: 'en' | 'es'; invites?: string[] },
+  opts: { mode: 'solo' | 'studio'; attest: boolean; reinforced: boolean; authorName?: string; lang?: 'en' | 'es'; invites?: { email: string; name?: string }[] },
 ) {
   if (record.workPda) throw new ApiError(409, 'Esta canción ya está registrada.');
   if (!opts.attest) throw new ApiError(400, 'Tenés que aceptar la declaración de autoría.');
@@ -306,8 +306,8 @@ export async function registerWork(
   const inviteErrors: { email: string; error: string }[] = [];
   if (!solo) {
     const registered = { ...record, fingerprint: pf.fingerprint, workPda: pda.toBase58(), onchainStatus: work.status };
-    for (const email of opts.invites ?? []) {
-      try { await invite(registered, email); } catch (e) { inviteErrors.push({ email, error: (e as Error).message }); }
+    for (const { email, name } of opts.invites ?? []) {
+      try { await invite(registered, email, name); } catch (e) { inviteErrors.push({ email, error: (e as Error).message }); }
     }
   }
   return { signature: sig, work, inviteErrors };
@@ -315,7 +315,7 @@ export async function registerWork(
 
 /* ---------- colaboración ---------- */
 
-export async function invite(record: WorkRow, email: string) {
+export async function invite(record: WorkRow, email: string, name?: string) {
   const e = email.trim().toLowerCase();
   if (!isEmail(e)) throw new ApiError(400, 'Ese email no parece válido.');
   const work = await mustReadWork(record);
@@ -325,7 +325,7 @@ export async function invite(record: WorkRow, email: string) {
     throw new ApiError(400, 'Máximo 8 autores.');
   }
   if (existing.some((i) => i.email === e)) throw new ApiError(400, 'Esa persona ya está invitada.');
-  await db.insert(workInvites).values({ workId: record.id, email: e });
+  await db.insert(workInvites).values({ workId: record.id, email: e, name: name?.trim().slice(0, 80) || null });
   return { ok: true };
 }
 
@@ -352,7 +352,7 @@ export async function acceptInvite(record: WorkRow, actor: Actor) {
     await run(me, actor.uid, 'tx', (p) => p.methods.acceptInvite()
       .accounts({ work: new PublicKey(work.pda), signer: me.publicKey }).rpc());
   }
-  await db.update(workInvites).set({ status: 'accepted' })
+  await db.update(workInvites).set({ status: 'accepted', wallet: me.publicKey.toBase58(), name: inv.name || actor.name || null })
     .where(and(eq(workInvites.workId, record.id), eq(workInvites.email, inv.email)));
   return { ok: true };
 }
@@ -524,12 +524,12 @@ export async function chainView(record: WorkRow, actor: Actor | null) {
   const relation = actor ? await relationOf(record, actor) : 'none';
   const myWallet = actor ? await getWalletPubkey(actor.uid) : null;
 
+  const invites = await db.select().from(workInvites).where(eq(workInvites.workId, record.id));
   const people = await Promise.all(work.contributors.map(async (c) => {
     const uid = await walletPubkeyToUid(c.wallet);
-    const label = uid === record.userId ? (record.displayName ?? 'Autor') : `${c.wallet.slice(0, 4)}…${c.wallet.slice(-4)}`;
+    const label = uid === record.userId ? (record.displayName ?? 'Autor') : (invites.find((i) => i.wallet === c.wallet)?.name || `${c.wallet.slice(0, 4)}…${c.wallet.slice(-4)}`);
     return { ...c, label, isCreator: c.wallet === work.creator, isMe: c.wallet === myWallet };
   }));
-  const invites = await db.select().from(workInvites).where(eq(workInvites.workId, record.id));
   const versions = await db.select({
     idx: workVersions.idx, contentHash: workVersions.contentHash, txSig: workVersions.txSig,
     authorUid: workVersions.authorUid, units: workVersions.units, createdAt: workVersions.createdAt,
@@ -575,11 +575,12 @@ export async function certificateData(record: WorkRow) {
     .where(eq(attestations.workId, record.id)).orderBy(desc(attestations.createdAt)).limit(1);
   const [v0] = await db.select().from(workVersions)
     .where(and(eq(workVersions.workId, record.id), eq(workVersions.idx, 0))).limit(1);
+  const invitedRows = await db.select().from(workInvites).where(eq(workInvites.workId, record.id));
   const people = await Promise.all(work.contributors.map(async (c) => {
     const uid = await walletPubkeyToUid(c.wallet);
     return {
       wallet: c.wallet, bps: c.bps,
-      label: uid === record.userId ? (record.displayName ?? 'Autor') : `${c.wallet.slice(0, 4)}…${c.wallet.slice(-4)}`,
+      label: uid === record.userId ? (record.displayName ?? 'Autor') : (invitedRows.find((i) => i.wallet === c.wallet)?.name || `${c.wallet.slice(0, 4)}…${c.wallet.slice(-4)}`),
     };
   }));
   return {
