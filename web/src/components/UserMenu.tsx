@@ -8,7 +8,7 @@ import { usePending } from '@/hooks/usePending';
 import { soliricFetch } from '@/lib/soliric/client-api';
 import { useT } from '@/hooks/useI18n';
 
-interface WalletInfo { pubkey: string; balance: number; cluster: string; explorer: string; freeLeft?: number | null; freeTotal?: number }
+interface WalletInfo { pubkey: string; balance: number; cluster: string; explorer: string; freeLeft?: number | null; freeTotal?: number; sponsoredSol?: number; capSol?: number | null }
 
 /** Pastilla con la cantidad de cosas pendientes (invitaciones por aceptar y repartos por firmar). */
 export function PendingBadge({ count, className = '' }: { count: number; className?: string }) {
@@ -99,6 +99,21 @@ export default function UserMenu() {
                 <span style={{ color: 'rgba(247,239,229,0.66)' }}>{t('Registros gratis')}</span>
                 <span className="mono">{wallet.freeLeft === null ? t('Sin límite') : t('{left} de {total}', { left: wallet.freeLeft, total: wallet.freeTotal ?? 3 })}</span>
               </p>
+            )}
+            {wallet && wallet.sponsoredSol !== undefined && wallet.capSol !== undefined && (
+              <div className="mt-2 pt-2" style={{ borderTop: '1px solid rgba(247,239,229,0.12)' }}>
+                <p className="flex items-center justify-between">
+                  <span style={{ color: 'rgba(247,239,229,0.66)' }}>{t('Cupo gratuito de red')}</span>
+                  <span className="mono">{wallet.capSol === null ? t('Sin límite') : `${wallet.sponsoredSol.toFixed(4)} / ${wallet.capSol} SOL`}</span>
+                </p>
+                {wallet.capSol !== null && (
+                  <div className="mt-1.5 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(247,239,229,0.12)' }}
+                    role="img" aria-label={t('Usaste {n} % del cupo', { n: Math.min(100, Math.round((wallet.sponsoredSol / wallet.capSol) * 100)) })}>
+                    <div className="h-full rounded-full" style={{ width: `${Math.min(100, (wallet.sponsoredSol / wallet.capSol) * 100)}%`, background: '#F58A45' }} />
+                  </div>
+                )}
+                <p className="mt-1.5 text-xs" style={{ color: 'rgba(247,239,229,0.6)' }}>{t('Cada versión guardada usa unos 0,0015 SOL de este cupo.')}</p>
+              </div>
             )}
           </div>
 

@@ -502,4 +502,7 @@ export const EN: Record<string, string> = {
   'Registros gratis': 'Free registrations',
   'Sin límite': 'Unlimited',
   '{left} de {total}': '{left} of {total}',
+  'Cupo gratuito de red': 'Free network allowance',
+  'Usaste {n} % del cupo': 'You used {n}% of the allowance',
+  'Cada versión guardada usa unos 0,0015 SOL de este cupo.': 'Each saved version uses about 0.0015 SOL of this allowance.',
 };

@@ -13,6 +13,9 @@ const total = async (where: ReturnType<typeof eq>) => {
   return Number(row?.n ?? 0);
 };
 
+/** Lo que la tesorería le adelantó a esta cuenta en toda su vida (lamports). */
+export const sponsoredTo = (uid: string) => total(eq(funding.uid, uid));
+
 export async function registeredCount(uid: string): Promise<number> {
   const [row] = await db.select({ n: sql<string>`count(*)` }).from(works).where(and(eq(works.userId, uid), isNotNull(works.workPda)));
   return Number(row?.n ?? 0);
