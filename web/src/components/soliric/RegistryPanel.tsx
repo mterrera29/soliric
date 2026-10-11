@@ -67,6 +67,7 @@ export default function RegistryPanel({ workId, onChanged }: Props) {
       setNotice(ok);
       await load();
       onChanged?.();
+      window.dispatchEvent(new Event('soliric:pending-changed'));
     } catch (e) {
       setError((e as Error).message);
     } finally {

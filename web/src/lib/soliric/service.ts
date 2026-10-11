@@ -604,6 +604,33 @@ export async function myInvitations(actor: Actor) {
   }));
 }
 
+/** Lo que le toca hacer a esta persona: aceptar invitaciones y firmar repartos propuestos. */
+export async function myPending(actor: Actor) {
+  const email = actor.email.toLowerCase();
+  const invites = await db.select().from(workInvites).where(eq(workInvites.email, email));
+  const invitedWorks = invites.length ? await db.select().from(works).where(inArray(works.id, invites.map((i) => i.workId))) : [];
+
+  const invitations = invitedWorks
+    .filter((w) => w.onchainStatus === 'open' && invites.find((i) => i.workId === w.id)?.status === 'pending')
+    .map((w) => ({ workId: w.id, title: w.title, owner: w.displayName }));
+
+  // Repartos propuestos donde esta persona es autora y todavía no firmó (se confirma leyendo la cadena)
+  const owned = await db.select().from(works).where(and(eq(works.userId, actor.uid), eq(works.onchainStatus, 'proposed')));
+  const joined = invitedWorks.filter((w) => w.onchainStatus === 'proposed' && invites.find((i) => i.workId === w.id)?.status === 'accepted');
+  const candidates = [...new Map([...owned, ...joined].map((w) => [w.id, w])).values()].slice(0, 20);
+  const myWallet = candidates.length ? await getWalletPubkey(actor.uid) : null;
+  const toSign: { workId: string; title: string }[] = [];
+  for (const w of candidates) {
+    try {
+      const chain = await mustReadWork(w);
+      if (chain.status === 'proposed' && chain.contributors.some((c) => c.wallet === myWallet && !c.signed)) {
+        toSign.push({ workId: w.id, title: w.title });
+      }
+    } catch (e) { console.error('[soliric] myPending', w.id, e); }
+  }
+  return { invitations, toSign, count: invitations.length + toSign.length };
+}
+
 /* ---------- certificado ---------- */
 
 /** Datos para el certificado imprimible: obra, autores, hashes sellados y transacción del registro. */

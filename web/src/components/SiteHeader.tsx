@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LogIn, LogOut, Menu, X } from 'lucide-react';
+import { LogIn, Menu, X } from 'lucide-react';
+import UserMenu, { PendingBadge } from './UserMenu';
+import { usePending } from '@/hooks/usePending';
 import LanguageToggle from './LanguageToggle';
 import Logo from './Logo';
 import { useAuth } from '@/hooks/useAuth';
@@ -13,7 +15,8 @@ import { useT } from '@/hooks/useI18n';
 export default function SiteHeader() {
   const t = useT();
   const pathname = usePathname();
-  const { user, userId, login, logout } = useAuth();
+  const { userId, login, logout } = useAuth();
+  const { count: pending } = usePending();
   const [open, setOpen] = useState(false);
 
   const links = [
@@ -32,18 +35,18 @@ export default function SiteHeader() {
         <Link href="/" aria-label="Soliric" className="min-h-11 inline-flex items-center"><Logo size={26} /></Link>
 
         <div className="hidden lg:flex items-center gap-1" style={{ color: 'rgba(247,239,229,0.74)' }}>
-          {links.map((l) => <Link key={l.href} href={l.href} className={linkClass(l.href)} aria-current={active(l.href) ? 'page' : undefined}>{l.label}</Link>)}
+          {links.map((l) => (
+            <Link key={l.href} href={l.href} className={`${linkClass(l.href)} gap-2`} aria-current={active(l.href) ? 'page' : undefined}>
+              {l.label}{l.href === '/collaborations' && <PendingBadge count={pending} />}
+            </Link>
+          ))}
         </div>
 
         <div className="flex items-center gap-2">
           <LanguageToggle />
           <Link href="/new" className="sol-btn-primary hidden sm:inline-flex items-center min-h-11 px-4 text-sm">{t('Registrar una letra')}</Link>
           {userId ? (
-            <button onClick={logout} title={t('Cerrar sesión')} aria-label={t('Cerrar sesión')}
-              className="hidden lg:inline-flex p-2.5 rounded-lg hover:bg-white/10" style={{ color: 'rgba(247,239,229,0.74)' }}>
-              <LogOut className="w-4 h-4" aria-hidden />
-              <span className="sr-only">{user?.displayName}</span>
-            </button>
+            <UserMenu />
           ) : (
             <button onClick={login} className="sol-btn-ghost hidden lg:inline-flex items-center gap-2 min-h-11 px-4 text-sm">
               <LogIn className="w-4 h-4" aria-hidden /> {t('Ingresar')}
@@ -57,7 +60,11 @@ export default function SiteHeader() {
 
       {open && (
         <div className="lg:hidden border-t px-5 py-3 space-y-1 animate-fade-in" style={{ borderColor: 'rgba(247,239,229,0.12)', color: 'rgba(247,239,229,0.82)' }}>
-          {links.map((l) => <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className={`${linkClass(l.href)} w-full`}>{l.label}</Link>)}
+          {links.map((l) => (
+            <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className={`${linkClass(l.href)} w-full justify-between`}>
+              {l.label}{l.href === '/collaborations' && <PendingBadge count={pending} />}
+            </Link>
+          ))}
           <Link href="/new" onClick={() => setOpen(false)} className="sol-btn-primary flex items-center justify-center min-h-11 px-4 text-sm mt-2">{t('Registrar una letra')}</Link>
           {userId
             ? <button onClick={() => { setOpen(false); logout(); }} className={`${linkClass('')} w-full`}>{t('Cerrar sesión')}</button>
