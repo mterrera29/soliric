@@ -471,4 +471,7 @@ export const EN: Record<string, string> = {
   'Soliric sella en Solana tu declaración de autoría con fecha, autores y reparto, sin publicar una sola palabra. Cualquiera puede comprobarlo, sin cuenta.': 'Soliric seals your authorship declaration on Solana with a date, the authors and the split, without publishing a single word. Anyone can check it, no account needed.',
   'Deja constancia en Solana de que la escribiste, cuándo y con quién.': 'Record on Solana that you wrote it, when, and with whom.',
   'Ejemplo': 'Example',
+  'Todavía hay invitaciones sin aceptar. Esperá a que tus coautores se sumen, o retirá la invitación, antes de repartir.': 'There are invitations nobody has accepted yet. Wait for your co-authors to join, or withdraw the invitation, before splitting.',
+  'Esperá a que tus coautores acepten la invitación antes de repartir: si cerrás ahora, la obra queda sin ellos. También podés retirar la invitación.': 'Wait for your co-authors to accept the invitation before splitting: if you close now, the work is left without them. You can also withdraw the invitation.',
+  'Esta obra ya se cerró sin vos: no se puede aceptar la invitación. Pedile a quien la creó que registre una nueva y que espere a que te sumes antes de repartir.': 'This work was already closed without you, so the invitation can no longer be accepted. Ask its creator to register a new one and to wait for you to join before splitting.',
 };

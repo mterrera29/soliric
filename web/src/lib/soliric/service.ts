@@ -385,6 +385,11 @@ export async function commitVersion(record: WorkRow, actor: Actor, text: { lyric
 /** Reparto y firmas. `manual` mapea wallet → bps (debe sumar 10000). */
 export async function proposeSplit(record: WorkRow, actor: Actor, manual: Record<string, number> | null, secs?: number) {
   const work = await mustReadWork(record);
+  // Un coautor invitado que todavía no aceptó no figura en la obra: si se repartiera ahora, la obra quedaría cerrada sin él
+  const waiting = await db.select().from(workInvites).where(and(eq(workInvites.workId, record.id), eq(workInvites.status, 'pending')));
+  if (waiting.length) {
+    throw new ApiError(400, 'Todavía hay invitaciones sin aceptar. Esperá a que tus coautores se sumen, o retirá la invitación, antes de repartir.');
+  }
   const kp = await getOrCreateWallet(actor.uid, actor.email);
   const bps = manual ? work.contributors.map((c) => Number(manual[c.wallet] ?? 0)) : null;
   const window = manual ? 0 : Math.min(Math.max(0, secs ?? windowSecs()), DEFAULT_WINDOW_SECS);

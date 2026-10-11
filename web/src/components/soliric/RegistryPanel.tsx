@@ -86,6 +86,7 @@ export default function RegistryPanel({ workId, onChanged }: Props) {
   if (!data) return <p className="p-6 text-sm" style={{ color: 'var(--text-secondary)' }}>{error || t('Esta canción todavía no está registrada.')}</p>;
 
   const pendingInvite = data.relation === 'invited';
+  const waitingForCoauthors = isOwner ? data.invites.filter((i) => i.status === 'pending').length : 0;
   const needsMySignature = status === 'proposed' && me && !me.signed;
   const canChallenge = !isMember && (status === 'closing' || status === 'final');
   const latestText = draftLyrics ?? data.text?.lyrics ?? '';
@@ -154,7 +155,12 @@ export default function RegistryPanel({ workId, onChanged }: Props) {
         ))}
       </section>
 
-      {pendingInvite && (
+      {pendingInvite && status !== 'open' && (
+        <p className="text-sm rounded-xl p-3" style={{ background: 'var(--input-bg)', color: 'var(--text-secondary)' }}>
+          {t('Esta obra ya se cerró sin vos: no se puede aceptar la invitación. Pedile a quien la creó que registre una nueva y que espere a que te sumes antes de repartir.')}
+        </p>
+      )}
+      {pendingInvite && status === 'open' && (
         <button disabled={!!busy} onClick={() => act('accept', 'accept', {}, t('Ya sos coautor/a de esta obra.'))}
           className="btn-cozy bg-ember hover:bg-ember-light text-white w-full py-3 disabled:opacity-40">
           {busy === 'accept' ? t('Aceptando…') : t('Aceptar la invitación')}
@@ -189,6 +195,11 @@ export default function RegistryPanel({ workId, onChanged }: Props) {
           </form>
 
           <h3 className="text-xs font-semibold uppercase tracking-wider pt-2" style={{ color: 'var(--text-secondary)' }}>{t('Cerrar y repartir')}</h3>
+          {waitingForCoauthors > 0 && (
+            <p className="text-sm rounded-xl p-3" style={{ background: 'var(--input-bg)', color: 'var(--text-secondary)' }}>
+              {t('Esperá a que tus coautores acepten la invitación antes de repartir: si cerrás ahora, la obra queda sin ellos. También podés retirar la invitación.')}
+            </p>
+          )}
           {manual ? (
             <div className="space-y-2">
               {data.people.map((p) => (
@@ -209,12 +220,12 @@ export default function RegistryPanel({ workId, onChanged }: Props) {
             </div>
           ) : (
             <div className="flex flex-col sm:flex-row gap-2">
-              <button disabled={!!busy} onClick={() => act('propose', 'propose', {}, t('Reparto automático propuesto.'))}
+              <button disabled={!!busy || waitingForCoauthors > 0} onClick={() => act('propose', 'propose', {}, t('Reparto automático propuesto.'))}
                 className="flex-1 btn-cozy bg-ember hover:bg-ember-light text-white py-2.5 disabled:opacity-40">
                 {busy === 'propose' ? t('Cerrando…') : t('Repartir según aportes')}
               </button>
               {data.people.length > 1 && (
-                <button onClick={() => setManual(Object.fromEntries(data.people.map((p) => [p.wallet, String(100 / data.people.length)])))}
+                <button disabled={waitingForCoauthors > 0} onClick={() => setManual(Object.fromEntries(data.people.map((p) => [p.wallet, String(100 / data.people.length)])))}
                   className="rounded-xl px-4 py-2.5 text-sm font-semibold bg-terracotta/20 text-warm-tan hover:bg-terracotta/30">{t('Repartir a mano')}</button>
               )}
             </div>
