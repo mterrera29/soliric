@@ -143,12 +143,11 @@ Vercel (root `web/`) + Neon + the devnet program. Set the env vars above plus `N
 
 ## Disclosures
 
-**Prior work and what was built when.** This repository starts on 2026-10-08. Before it existed:
-- The Anchor program prototype (14 tests), a first Express server and a vanilla web front end existed by 2026-10-03, in a separate working folder.
-- On 2026-10-07 the program gained the public dispute window for solo works, challenges with an arbiter and events, and was deployed to devnet.
-- Fogón, a songwriting app by the same author (first commit 2026-05-14), is a separate, older product. It is not part of this submission. It is used in the demo as the first client of the API, and it is the author's own app, not an independent customer.
+**Prior work and what was built when.** Soliric was built entirely during the competition. Nothing of it existed before: no code, users, revenue or funding.
+- It was built in two stages. First the Anchor program prototype, a first Express server and a vanilla front end, in a separate working folder (earliest files dated 2026-10-03; on 2026-10-07 the program gained dispute challenges with an arbiter and events, and was deployed to devnet). Then this repository, from 2026-10-08 on (see `CHANGELOG.md` and the commit history).
+- **Fogón** is a separate, older product by the same author (first commit 2026-05-14), a songwriting app that existed before the competition. It is not part of this submission. It was used only to test Soliric as a client of the API and appears in the demo for that reason. It is the author's own app, not an independent customer.
 
-Built in this repository (see `CHANGELOG.md` and the commit history): the standalone web app and public API, the developer portal, near-duplicate detection and catalog checks, the dispute triage flow, co-authors through the API, English and Spanish interfaces, the brand, and the deployment.
+Built in this repository: the standalone web app and public API, the developer portal, near-duplicate detection and catalog checks, the dispute triage flow, co-authors through the API, English and Spanish interfaces, the brand, and the deployment.
 
 **Material use of AI.** Most of the code was written by an AI coding assistant (Claude Code) working under the author's direction. The author decided the product and its rules (what is registered, what stays private, the dispute triage, the split between compositions and other people's lyrics, Soliric as a standalone service), ran and tested the flows on devnet, funded the treasury, and set up the database, authentication and hosting.
 
