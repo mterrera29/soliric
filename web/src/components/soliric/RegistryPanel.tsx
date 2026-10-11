@@ -161,10 +161,14 @@ export default function RegistryPanel({ workId, onChanged }: Props) {
         </p>
       )}
       {pendingInvite && status === 'open' && (
-        <button disabled={!!busy} onClick={() => act('accept', 'accept', {}, t('Ya sos coautor/a de esta obra.'))}
-          className="btn-cozy bg-ember hover:bg-ember-light text-white w-full py-3 disabled:opacity-40">
-          {busy === 'accept' ? t('Aceptando…') : t('Aceptar la invitación')}
-        </button>
+        <div className="space-y-2">
+          <button disabled={!!busy} onClick={() => act('accept', 'accept', {}, t('Ya sos coautor/a de esta obra.'))}
+            className="btn-cozy bg-ember hover:bg-ember-light text-white w-full py-3 disabled:opacity-40">
+            {busy === 'accept' ? t('Aceptando…') : t('Aceptar la invitación')}
+          </button>
+          <button disabled={!!busy} onClick={() => act('decline', 'accept', {}, t('Rechazaste la invitación.'), 'DELETE')}
+            className="text-sm text-warm-tan hover:underline">{t('Rechazar la invitación')}</button>
+        </div>
       )}
 
       {status === 'open' && isMember && (
@@ -198,6 +202,11 @@ export default function RegistryPanel({ workId, onChanged }: Props) {
           {waitingForCoauthors > 0 && (
             <p className="text-sm rounded-xl p-3" style={{ background: 'var(--input-bg)', color: 'var(--text-secondary)' }}>
               {t('Esperá a que tus coautores acepten la invitación antes de repartir: si cerrás ahora, la obra queda sin ellos. También podés retirar la invitación.')}
+            </p>
+          )}
+          {data.people.length > 1 && (
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+              {t('Con coautores, cada uno tiene que firmar el reparto para que la obra quede registrada. Si alguno no lo acepta, vuelve todo a edición.')}
             </p>
           )}
           {manual ? (
@@ -237,6 +246,11 @@ export default function RegistryPanel({ workId, onChanged }: Props) {
         <button disabled={!!busy} onClick={() => act('sign', 'action', { op: 'sign' }, t('Firmaste el reparto.'))}
           className="btn-cozy bg-ember hover:bg-ember-light text-white w-full py-3 inline-flex items-center justify-center gap-2 disabled:opacity-40">
           <Check className="w-4 h-4" /> {t('Firmar el reparto')}
+        </button>
+      )}
+      {status === 'proposed' && isMember && !isOwner && (
+        <button disabled={!!busy} onClick={() => act('reject', 'action', { op: 'reject' }, t('Rechazaste el reparto: la obra volvió a edición.'))} className="text-sm text-warm-tan hover:underline">
+          {busy === 'reject' ? t('Rechazando…') : t('No acepto el reparto (vuelve todo atrás)')}
         </button>
       )}
       {status === 'proposed' && isOwner && (

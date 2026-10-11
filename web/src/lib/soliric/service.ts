@@ -23,6 +23,7 @@ import { evaluateSubmission, validateChallengeInput, type ChallengeInput } from 
 import { buildMetadata, canonicalJson, hashMetadata, registrationMemo } from './metadata';
 import { diffUnits } from './units';
 import type { ChainStatus } from './types';
+import { autoBps } from './split';
 import { getOrCreateWallet, getWallet, getWalletPubkey, walletPubkeyToUid } from './wallets';
 
 export type WorkRow = typeof works.$inferSelect;
@@ -391,12 +392,44 @@ export async function proposeSplit(record: WorkRow, actor: Actor, manual: Record
     throw new ApiError(400, 'Todavía hay invitaciones sin aceptar. Esperá a que tus coautores se sumen, o retirá la invitación, antes de repartir.');
   }
   const kp = await getOrCreateWallet(actor.uid, actor.email);
-  const bps = manual ? work.contributors.map((c) => Number(manual[c.wallet] ?? 0)) : null;
-  const window = manual ? 0 : Math.min(Math.max(0, secs ?? windowSecs()), DEFAULT_WINDOW_SECS);
+  // Con coautores, el reparto (también el automático) tiene que firmarlo cada uno: nadie queda dentro por silencio.
+  // Por eso se manda siempre como propuesta con firmas; si alguien no la acepta, la obra vuelve a edición.
+  const needsSignatures = !!manual || work.contributors.length > 1;
+  let bps: number[] | null = null;
+  if (manual) bps = work.contributors.map((c) => Number(manual[c.wallet] ?? 0));
+  else if (needsSignatures) {
+    bps = autoBps(work.contributors.map((c) => Number(c.units)));
+    if (!bps) throw new ApiError(400, 'Todavía no hay aportes para repartir.');
+  }
+  const window = needsSignatures ? 0 : Math.min(Math.max(0, secs ?? windowSecs()), DEFAULT_WINDOW_SECS);
   const sig = await run(kp, actor.uid, 'tx', (p) => p.methods.proposeSplit(bps, new BN(window))
     .accounts({ work: new PublicKey(work.pda), creator: kp.publicKey }).rpc());
   await syncStatus(record, await mustReadWork(record));
   return { signature: sig };
+}
+
+/** Un coautor no acepta el reparto propuesto: todo vuelve atrás y la obra se reabre (lo firma la wallet de quien la creó). */
+export async function rejectSplit(record: WorkRow, actor: Actor) {
+  const work = await mustReadWork(record);
+  if (work.status !== 'proposed') throw new ApiError(400, 'No hay un reparto propuesto para rechazar.');
+  const me = await getOrCreateWallet(actor.uid, actor.email);
+  if (!work.contributors.some((c) => c.wallet === me.publicKey.toBase58())) throw new ApiError(403, 'No sos autor de esta obra.');
+  const creator = await getWallet(record.userId);
+  const sig = await run(creator, record.userId, 'tx', (p) => p.methods.reopen()
+    .accounts({ work: new PublicKey(work.pda), creator: creator.publicKey }).rpc());
+  await syncStatus(record, await mustReadWork(record));
+  return { signature: sig };
+}
+
+/** La persona invitada rechaza la invitación: se borra y la obra sigue sin ella. */
+export async function declineInvite(record: WorkRow, actor: Actor) {
+  const email = actor.email.toLowerCase();
+  const [inv] = await db.select().from(workInvites)
+    .where(and(eq(workInvites.workId, record.id), eq(workInvites.email, email))).limit(1);
+  if (!inv) throw new ApiError(404, 'No tenés una invitación para esta canción.');
+  if (inv.status !== 'pending') throw new ApiError(400, 'Ya aceptaste esta invitación.');
+  await db.delete(workInvites).where(and(eq(workInvites.workId, record.id), eq(workInvites.email, email)));
+  return { ok: true };
 }
 
 type SignerOp = 'signSplit' | 'object' | 'reopen' | 'finalize';

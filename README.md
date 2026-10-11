@@ -35,7 +35,9 @@ A songwriter has no cheap, fast way to put on record that a lyric was theirs on 
 4. **Lets anyone verify** a lyric by pasting it: the answer is read from the chain, tolerating small differences (an extra word, a missing line, a title on top).
 
 ### Co-authorship
-Invite co-authors by e-mail. The split is computed from each person's contributions (a line-level diff of each saved version), everyone gets a window to object, and manual splits need every signature.
+Invite co-authors by e-mail. The split is computed from each person's contributions (a line-level diff of each saved version), and every author must sign it.
+
+A co-authored work becomes final only when **every author has accepted both the invitation and the split**: the creator cannot propose the split while an invitation is pending, each author must sign the proposed split, and if anyone declines the invitation or rejects the split, everything goes back to editing.
 
 ### Fighting copies (layered, with honest limits)
 | Layer | What it does |
