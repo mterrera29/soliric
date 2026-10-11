@@ -118,7 +118,7 @@ export default function RegisterPanel({ workId, initialInvites = [], defaultAuth
             <legend className="sr-only">{t('Cómo registrar')}</legend>
             {([
               ['solo', t('Como mía'), t('Firmás sola/o. Hay un período público para impugnar antes de quedar registrada.'), <UserIcon key="u" className="w-5 h-5" />],
-              ['studio', t('Con coautores'), t('Invitás a otras personas, el reparto sale de los aportes de cada una.'), <Users key="s" className="w-5 h-5" />],
+              ['studio', t('Con coautores'), t('Invitás a otras personas. El reparto sale de lo que aportó cada una y todas lo tienen que firmar.'), <Users key="s" className="w-5 h-5" />],
             ] as const).map(([value, title, text, icon]) => (
               <label key={value} className="rounded-xl p-4 cursor-pointer transition-all"
                 style={{ ...card, ...(mode === value ? { borderColor: '#F58A45', boxShadow: '0 0 0 1px #F58A45' } : {}) }}>

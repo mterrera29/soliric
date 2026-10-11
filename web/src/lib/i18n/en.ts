@@ -484,4 +484,6 @@ export const EN: Record<string, string> = {
   'No sos autor de esta obra.': 'You are not an author of this work.',
   'Ya aceptaste esta invitación.': 'You already accepted this invitation.',
   'Con coautores, cada uno tiene que firmar el reparto para que la obra quede registrada. Si alguno no lo acepta, vuelve todo a edición.': 'With co-authors, each one has to sign the split for the work to be registered. If anyone does not accept it, everything goes back to editing.',
+  'Invitás a otras personas. El reparto sale de lo que aportó cada una y todas lo tienen que firmar.': 'You invite other people. The split comes from what each one contributed, and everyone has to sign it.',
+  'Invitás a tus coautores. El reparto sale de lo que aportó cada uno y todos lo tienen que firmar: si alguno no lo acepta, vuelve todo atrás.': 'You invite your co-authors. The split comes from what each one contributed and everyone has to sign it: if anyone does not accept it, everything goes back.',
 };

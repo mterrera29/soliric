@@ -132,7 +132,7 @@ export default async function SoliricLanding() {
               <article className="md:col-span-4 rounded-3xl border p-7 space-y-5" style={{ ...line, background: 'var(--l-surface)' }}>
                 <div className="space-y-2">
                   <h3 className="flex items-center gap-2 text-xl font-heading"><Users className="w-5 h-5 text-[var(--ember-soft)]" aria-hidden /> {t('Coautoría con reparto firmado')}</h3>
-                  <p className="max-w-[56ch] leading-relaxed" style={muted}>{t('Invitás a tus coautores. El reparto sale de lo que aportó cada uno y todos tienen un plazo para objetarlo antes de que quede firme.')}</p>
+                  <p className="max-w-[56ch] leading-relaxed" style={muted}>{t('Invitás a tus coautores. El reparto sale de lo que aportó cada uno y todos lo tienen que firmar: si alguno no lo acepta, vuelve todo atrás.')}</p>
                 </div>
                 <div className="space-y-3" role="img" aria-label={t('Ejemplo: Ana 62 por ciento, Leo 38 por ciento, ambos firmaron')}>
                   <p className="mono text-xs" style={muted}>{t('Ejemplo')}</p>
