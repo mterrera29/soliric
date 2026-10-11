@@ -8,7 +8,7 @@ import { usePending } from '@/hooks/usePending';
 import { soliricFetch } from '@/lib/soliric/client-api';
 import { useT } from '@/hooks/useI18n';
 
-interface WalletInfo { pubkey: string; balance: number; cluster: string; explorer: string }
+interface WalletInfo { pubkey: string; balance: number; cluster: string; explorer: string; freeLeft?: number | null; freeTotal?: number }
 
 /** Pastilla con la cantidad de cosas pendientes (invitaciones por aceptar y repartos por firmar). */
 export function PendingBadge({ count, className = '' }: { count: number; className?: string }) {
@@ -94,6 +94,12 @@ export default function UserMenu() {
                 </div>
               </>
             ) : <p className="mt-1" style={{ color: 'rgba(247,239,229,0.66)' }}>{t('Cargando…')}</p>}
+            {wallet && wallet.freeLeft !== undefined && (
+              <p className="mt-2 pt-2 flex items-center justify-between" style={{ borderTop: '1px solid rgba(247,239,229,0.12)' }}>
+                <span style={{ color: 'rgba(247,239,229,0.66)' }}>{t('Registros gratis')}</span>
+                <span className="mono">{wallet.freeLeft === null ? t('Sin límite') : t('{left} de {total}', { left: wallet.freeLeft, total: wallet.freeTotal ?? 3 })}</span>
+              </p>
+            )}
           </div>
 
           <Link href="/works" role="menuitem" onClick={() => setOpen(false)} className={item}><FileText className="w-4 h-4" aria-hidden /> {t('Mis obras')}</Link>

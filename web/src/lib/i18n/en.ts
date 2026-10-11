@@ -499,4 +499,7 @@ export const EN: Record<string, string> = {
   'Te toca firmar el reparto': 'You need to sign the split',
   'Te invitaron: falta que aceptes': 'You were invited: accept to join',
   'No tenés nada pendiente.': 'You have nothing pending.',
+  'Registros gratis': 'Free registrations',
+  'Sin límite': 'Unlimited',
+  '{left} de {total}': '{left} of {total}',
 };
