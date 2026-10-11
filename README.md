@@ -158,3 +158,7 @@ Built in this repository: the standalone web app and public API, the developer p
 ## Credits
 
 Built for a Solana hackathon by Matías Gabriel Terrera, developed with AI assistance (Claude Code). The Anchor program and the first prototype were written first; the web app, partner API and this repository were built afterwards.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
