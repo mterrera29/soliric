@@ -143,7 +143,7 @@ Vercel (root `web/`) + Neon + the devnet program. Set the env vars above plus `N
 
 ## Disclosures
 
-**Prior work and what was built when.** Soliric was built entirely during the competition. Nothing of it existed before: no code, users, revenue or funding.
+**Prior work and what was built when.** Soliric was built entirely during the competition, which started on Saturday 2026-10-03. Nothing of it existed before: no code, users, revenue or funding.
 - It was built in two stages. First the Anchor program prototype, a first Express server and a vanilla front end, in a separate working folder (earliest files dated 2026-10-03; on 2026-10-07 the program gained dispute challenges with an arbiter and events, and was deployed to devnet). Then this repository, from 2026-10-08 on (see `CHANGELOG.md` and the commit history).
 - **Fogón** is a separate, older product by the same author (first commit 2026-05-14), a songwriting app that existed before the competition. It is not part of this submission. It was used only to test Soliric as a client of the API and appears in the demo for that reason. It is the author's own app, not an independent customer.
 
